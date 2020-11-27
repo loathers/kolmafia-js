@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "esModuleInterop": true,
+        "lib": ["es2019"],
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "noEmit": true,
+        "noImplicitAny": true,
+        "noImplicitThis": true,
+        "resolveJsonModule": true,
+        "strict": true,
+        "strictFunctionTypes": true,
+        "strictNullChecks": true
+    },
+    "files": ["index.d.ts"]
+}

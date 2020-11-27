@@ -1,0 +1,24 @@
+{
+    "nonProxyAggregateTypes": ["Slot", "Stat"],
+    "proxyRecords": {
+        "Bounty.monster": "Monster",
+        "Bounty.location": "Location",
+        "Class.primestat": "Stat",
+        "Coinmaster.item": "Item",
+        "Effect.all": "{ [source: string]: boolean }",
+        "Location.bounty": "Bounty",
+        "Skill.class": "Class",
+        "Thrall.skill": "Skill",
+        "Vykea.rune": "Item",
+        "Vykea.attack_element": "Element",
+        "Familiar.hatchling": "Item",
+        "Familiar.drop_item": "Item",
+        "Monster.attack_element": "Element",
+        "Monster.defense_element": "Element",
+        "Monster.phylum": "Phylum",
+        "Monster.poison": "Effect",
+        "Monster.images": "{ [image: string]: boolean }",
+        "Monster.random_modifiers": "{ [randomModifier: string]: boolean }",
+        "Monster.sub_types": "{ [subType: string]: boolean }"
+    }
+}
