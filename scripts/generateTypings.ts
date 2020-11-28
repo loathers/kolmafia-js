@@ -1,4 +1,4 @@
-import ts, { createPrinter } from "typescript";
+import { createPrinter, factory, SyntaxKind, TypeNode, NodeFlags, NewLineKind, PropertyDeclaration } from "typescript";
 import yargs from "yargs/yargs";
 import { promises as fs } from "fs";
 import { parse, HTMLElement } from "node-html-parser";
@@ -6,8 +6,11 @@ import TurndownService from "turndown";
 import { camelCase } from "change-case";
 
 import typeOverrides from "./typeOverrides.json"; 
+import { type } from "os";
 
-const TypeMap = {
+const zip = <T>(rows: T[][]) => rows[0].map((_, c) => rows.map(row => row[c]));
+
+const TYPE_MAP = {
   "java.lang.String": "string",
   "int": "number",
   "long": "number",
@@ -16,20 +19,32 @@ const TypeMap = {
   "boolean": "boolean",
 };
 
-type JavaType = keyof typeof TypeMap;
+const REF_PATTERN =  /(?<type>.*?) <a.*?>(?<name>.*?)<\/a>\((?<paramTypes>.*)\)/;
+const MAP_KEY_PATTERN = /\[([^:]+?)\]/g;
+
+const MODIFIERS = {
+  Abstract: factory.createModifier(SyntaxKind.AbstractKeyword),
+  Declare: factory.createModifier(SyntaxKind.DeclareKeyword),
+  Export: factory.createModifier(SyntaxKind.ExportKeyword),
+  Readonly: factory.createModifier(SyntaxKind.ReadonlyKeyword),
+  Static: factory.createModifier(SyntaxKind.StaticKeyword),
+};
+
+function notNull<T>(value: T | null): value is T {
+  return value !== null;
+}
+
+type JavaType = keyof typeof TYPE_MAP;
 
 type Await<T> = T extends { then(onfulfilled?: (value: infer U) => unknown): unknown; } ? U : T;
 
-const Modifiers = {
-  Abstract: ts.factory.createModifier(ts.SyntaxKind.AbstractKeyword),
-  Declare: ts.factory.createModifier(ts.SyntaxKind.DeclareKeyword),
-  Export: ts.factory.createModifier(ts.SyntaxKind.ExportKeyword),
-  Readonly: ts.factory.createModifier(ts.SyntaxKind.ReadonlyKeyword),
-  Static: ts.factory.createModifier(ts.SyntaxKind.StaticKeyword),
-};
-
 class GenerateTypings {
-  static MafiaClass = ts.createIdentifier("MafiaClass");
+  static MafiaClass = factory.createIdentifier("MafiaClass");
+
+  static massageRefType(type: string) {
+    if (type === "aggregate") return "any";
+    return type.replace(MAP_KEY_PATTERN, (m, key) => `[key: ${key}]`);
+  }
 
   static parseDataList(root: HTMLElement) {
     const dl = root.querySelector("dl");
@@ -42,8 +57,8 @@ class GenerateTypings {
   static resolveType(method: HTMLElement, dl: ReturnType<typeof GenerateTypings.parseDataList>) {
     const javaType = method.querySelector("span.returnType").innerText as JavaType;
 
-    if (TypeMap[javaType]) {
-      return TypeMap[javaType];
+    if (TYPE_MAP[javaType]) {
+      return TYPE_MAP[javaType];
     }
 
     if ("Return Type:" in dl) {
@@ -54,51 +69,51 @@ class GenerateTypings {
   }
 
   static aggregateTypeToTypeScript(proxyRecord: Await<ReturnType<GenerateTypings["parseProxyRecord"]>>) {
-    const MafiaClassExpression = ts.createExpressionWithTypeArguments(undefined, GenerateTypings.MafiaClass);
-    const MafiaClassHeritage = ts.createHeritageClause(ts.SyntaxKind.ExtendsKeyword, [MafiaClassExpression]);
+    const MafiaClassExpression = factory.createExpressionWithTypeArguments(GenerateTypings.MafiaClass, undefined);
+    const MafiaClassHeritage = factory.createHeritageClause(SyntaxKind.ExtendsKeyword, [MafiaClassExpression]);
 
-    const className = ts.factory.createIdentifier(proxyRecord.className);
-    const classNameType = ts.factory.createTypeReferenceNode(className);
+    const className = factory.createIdentifier(proxyRecord.className);
+    const classNameType = factory.createTypeReferenceNode(className);
     const narrowedStatics = GenerateTypings.createMafiaClassProps(classNameType);
 
     const props = proxyRecord.fields.flatMap(f => {
-      const type = ts.factory.createTypeReferenceNode(f.type, undefined);
-      const tags: ts.JSDocTag[] = [];
+      const type = factory.createTypeReferenceNode(f.type, undefined);
       // @ts-ignore
-      const doc = ts.factory.createJSDocComment(f.description, tags) as ts.PropertyDeclaration;
-      return [doc, ts.factory.createPropertyDeclaration(undefined, [Modifiers.Readonly], f.name, undefined, type, undefined)];
+      const doc = factory.createJSDocComment(f.description, undefined) as PropertyDeclaration;
+      return [doc, factory.createPropertyDeclaration(undefined, [MODIFIERS.Readonly], f.name, undefined, type, undefined)];
     });
-    return ts.factory.createClassDeclaration(undefined, [Modifiers.Declare], className, undefined, [MafiaClassHeritage], [...narrowedStatics, ...props]);
+    return factory.createClassDeclaration(undefined, undefined, className, undefined, [MafiaClassHeritage], [...narrowedStatics, ...props]);
   }
 
-  static createMafiaClassProps(typeDefault?: ts.TypeNode) {
-    const t = ts.factory.createIdentifier("T");
-    const typeT = ts.factory.createTypeReferenceNode(t);
-    const typeArrayOfT = ts.factory.createArrayTypeNode(typeT);
-    const tParam = ts.factory.createTypeParameterDeclaration(t, undefined, typeDefault);
+  static createMafiaClassProps(typeDefault?: TypeNode) {
+    const t = factory.createIdentifier("T");
+    const typeT = factory.createTypeReferenceNode(t);
+    const typeArrayOfT = factory.createArrayTypeNode(typeT);
+    const tParam = factory.createTypeParameterDeclaration(t, undefined, typeDefault);
 
-    const typeString = ts.factory.createTypeReferenceNode("string", undefined);
-    const typeArrayOfString = ts.factory.createArrayTypeNode(typeString);
+    const typeString = factory.createTypeReferenceNode("string", undefined);
+    const typeArrayOfString = factory.createArrayTypeNode(typeString);
 
-    const name = ts.factory.createParameterDeclaration(undefined, undefined, undefined, "name", undefined, typeString, undefined);
-    const names = ts.factory.createParameterDeclaration(undefined, undefined, undefined, "names", undefined, typeArrayOfString, undefined);
+    const name = factory.createParameterDeclaration(undefined, undefined, undefined, "name", undefined, typeString, undefined);
+    const names = factory.createParameterDeclaration(undefined, undefined, undefined, "names", undefined, typeArrayOfString, undefined);
 
     return [
-      ts.factory.createMethodDeclaration(undefined, [Modifiers.Static], undefined, "get", undefined, [tParam], [name], typeT, undefined),
-      ts.factory.createMethodDeclaration(undefined, [Modifiers.Static], undefined, "get", undefined, [tParam], [names], typeArrayOfT, undefined),
-      ts.factory.createMethodDeclaration(undefined, [Modifiers.Static], undefined, "all", undefined, [tParam], [], typeArrayOfT, undefined),
+      factory.createMethodDeclaration(undefined, [MODIFIERS.Static], undefined, "get", undefined, [tParam], [name], typeT, undefined),
+      factory.createMethodDeclaration(undefined, [MODIFIERS.Static], undefined, "get", undefined, [tParam], [names], typeArrayOfT, undefined),
+      factory.createMethodDeclaration(undefined, [MODIFIERS.Static], undefined, "all", undefined, [tParam], [], typeArrayOfT, undefined),
     ]
   }
 
   static createMafiaClass() {
     const props = GenerateTypings.createMafiaClassProps();
-    return ts.factory.createClassDeclaration(undefined, [Modifiers.Declare, Modifiers.Abstract], GenerateTypings.MafiaClass, undefined, undefined, props);
+    return factory.createClassDeclaration(undefined, [MODIFIERS.Declare, MODIFIERS.Abstract], GenerateTypings.MafiaClass, undefined, undefined, props);
   }
 
   static runtimeMethodToTypeScript(method: Await<ReturnType<GenerateTypings["getListOfRuntimeMethods"]>>[0]) {
-    const any = ts.factory.createTypeReferenceNode("any", undefined);
-    const params = method.args.map(a => ts.factory.createParameterDeclaration(undefined, undefined, undefined, a, undefined, any, undefined));
-    return ts.factory.createFunctionDeclaration(undefined, [Modifiers.Export], undefined, camelCase(method.name), undefined, params, any, undefined);
+    const type = factory.createTypeReferenceNode(method.type, undefined);
+    const paramToType = zip([method.params, method.paramTypes]);
+    const params = paramToType.map(([p, pt]) => factory.createParameterDeclaration(undefined, undefined, undefined, p, undefined, factory.createTypeReferenceNode(pt, undefined), undefined));
+    return factory.createFunctionDeclaration(undefined, [MODIFIERS.Export], undefined, method.name, undefined, params, type, undefined);
   }
 
   static parseArgs(args: string) {
@@ -118,18 +133,32 @@ class GenerateTypings {
     return parse(await fs.readFile(`${this.javadocsPath}/net/sourceforge/kolmafia/textui/${fileName}.html`, "utf8"));
   }
 
-  async getListOfRuntimeMethods() {
-    const root = await this.parseJavadoc("RuntimeLibrary");
-    const methods = root.querySelectorAll(".memberSummary tbody .colSecond code");
-
-    return methods.map(m => {
-      const signature = m.childNodes[1];
-
+  async parseRef() {
+    return (await fs.readFile(this.refPath, "utf8")).split("\n").map(l => {
+      const match = l.match(REF_PATTERN);
+      if (!match || !match.groups) return null;
+      const { name, type, paramTypes } = match.groups;
       return {
-        name: m.querySelector(".memberNameLink").innerText,
-        args: signature ? GenerateTypings.parseArgs(signature.innerText) : [],
+        name,
+        type: GenerateTypings.massageRefType(type),
+        paramTypes: paramTypes ? paramTypes.split(", ").map(t => GenerateTypings.massageRefType(t)) : [],
       };
-    }).filter(m => m.name !== "delete");
+    }).filter(notNull);
+  }
+
+  async getListOfRuntimeMethods() {
+    const refs = await this.parseRef();
+    const root = await this.parseJavadoc("RuntimeLibrary");
+    const methods = root.querySelectorAll(".memberSummary tbody .colSecond code").map(m => {
+      const name = camelCase(m.querySelector(".memberNameLink").innerText);
+      const signature = m.childNodes[1];
+      const params = signature ? GenerateTypings.parseArgs(signature.innerText) : [];
+
+      return { name, params };
+    });
+
+    const res = refs.flatMap(r => methods.filter(m => m.name === r.name && m.params.length == r.paramTypes.length).map(m => ({ ...r, params: m.params }))).filter(r => r.name !== "delete");
+    return res;
   }
 
   async getRuntimeLibrary() {
@@ -172,9 +201,7 @@ class GenerateTypings {
     const proxyRecordList = await this.getListOfProxyRecords();
     const runtimeLibrary = await this.getRuntimeLibrary();
 
-    const dts = ts.createSourceFile("kolmafia.d.ts", "", ts.ScriptTarget.Latest, false, ts.ScriptKind.TS);
-
-    const printer = ts.createPrinter({ newLine: ts.NewLineKind.LineFeed });
+    const printer = createPrinter({ newLine: NewLineKind.LineFeed });
 
     const aggregateTypes = [
       ...await Promise.all(proxyRecordList.map(a => this.parseProxyRecord(a))),
@@ -182,13 +209,20 @@ class GenerateTypings {
     ];
     const aggregateTypeNodes = aggregateTypes.map(p => GenerateTypings.aggregateTypeToTypeScript(p));
 
-    const nodeArray = ts.factory.createNodeArray([
+    const global = factory.createModuleDeclaration(
+      undefined, [MODIFIERS.Declare], factory.createIdentifier("global"), factory.createModuleBlock(aggregateTypeNodes),
+      NodeFlags.ExportContext | NodeFlags.GlobalAugmentation | NodeFlags.ContextFlags
+    );
+
+    const nodeArray = factory.createNodeArray([
       ...runtimeLibrary,
       GenerateTypings.createMafiaClass(),
-      ...aggregateTypeNodes,
+      global,
     ]);
 
-    return printer.printList(ts.ListFormat.MultiLine, nodeArray, dts);
+    const dts = factory.createSourceFile(nodeArray, factory.createToken(SyntaxKind.EndOfFileToken), NodeFlags.None);
+
+    return printer.printFile(dts);
   }
 }
 
