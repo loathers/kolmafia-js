@@ -599,6 +599,9 @@ declare abstract class MafiaClass {
     static all<T>(): T[];
 }
 declare class Bounty extends MafiaClass {
+    static get<T = Bounty>(name: string): T;
+    static get<T = Bounty>(names: string[]): T[];
+    static all<T = Bounty>(): T[];
     /**
      * Plural
      */
@@ -629,12 +632,18 @@ declare class Bounty extends MafiaClass {
     readonly location: Location;
 }
 declare class Class extends MafiaClass {
+    static get<T = Class>(name: string): T;
+    static get<T = Class>(names: string[]): T[];
+    static all<T = Class>(): T[];
     /**
      * Primestat
      */
     readonly primestat: Stat;
 }
 declare class Coinmaster extends MafiaClass {
+    static get<T = Coinmaster>(name: string): T;
+    static get<T = Coinmaster>(names: string[]): T[];
+    static all<T = Coinmaster>(): T[];
     /**
      * Token
      */
@@ -665,6 +674,9 @@ declare class Coinmaster extends MafiaClass {
     readonly nickname: string;
 }
 declare class Effect extends MafiaClass {
+    static get<T = Effect>(name: string): T;
+    static get<T = Effect>(names: string[]): T[];
+    static all<T = Effect>(): T[];
     /**
      * Name
      */
@@ -703,12 +715,18 @@ declare class Effect extends MafiaClass {
     readonly candy_tier: number;
 }
 declare class Element extends MafiaClass {
+    static get<T = Element>(name: string): T;
+    static get<T = Element>(names: string[]): T[];
+    static all<T = Element>(): T[];
     /**
      * Image
      */
     readonly image: string;
 }
 declare class Familiar extends MafiaClass {
+    static get<T = Familiar>(name: string): T;
+    static get<T = Familiar>(names: string[]): T[];
+    static all<T = Familiar>(): T[];
     /**
      * Hatchling
      */
@@ -859,6 +877,9 @@ declare class Familiar extends MafiaClass {
     readonly poke_attribute: string;
 }
 declare class Item extends MafiaClass {
+    static get<T = Item>(name: string): T;
+    static get<T = Item>(names: string[]): T[];
+    static all<T = Item>(): T[];
     /**
      * The name of this Item.
      */
@@ -1034,6 +1055,9 @@ declare class Item extends MafiaClass {
     readonly noob_skill: Skill;
 }
 declare class Location extends MafiaClass {
+    static get<T = Location>(name: string): T;
+    static get<T = Location>(names: string[]): T[];
+    static all<T = Location>(): T[];
     /**
      * Nocombats
      */
@@ -1092,6 +1116,9 @@ declare class Location extends MafiaClass {
     readonly wanderers: boolean;
 }
 declare class Monster extends MafiaClass {
+    static get<T = Monster>(name: string): T;
+    static get<T = Monster>(names: string[]): T[];
+    static all<T = Monster>(): T[];
     /**
      * Name
      */
@@ -1210,12 +1237,18 @@ declare class Monster extends MafiaClass {
     readonly attributes: string;
 }
 declare class Phylum extends MafiaClass {
+    static get<T = Phylum>(name: string): T;
+    static get<T = Phylum>(names: string[]): T[];
+    static all<T = Phylum>(): T[];
     /**
      * Image
      */
     readonly image: string;
 }
 declare class Servant extends MafiaClass {
+    static get<T = Servant>(name: string): T;
+    static get<T = Servant>(names: string[]): T[];
+    static all<T = Servant>(): T[];
     /**
      * Id
      */
@@ -1254,6 +1287,9 @@ declare class Servant extends MafiaClass {
     readonly level21_ability: string;
 }
 declare class Skill extends MafiaClass {
+    static get<T = Skill>(name: string): T;
+    static get<T = Skill>(names: string[]): T[];
+    static all<T = Skill>(): T[];
     /**
      * Name
      */
@@ -1324,6 +1360,9 @@ declare class Skill extends MafiaClass {
     readonly timescast: number;
 }
 declare class Thrall extends MafiaClass {
+    static get<T = Thrall>(name: string): T;
+    static get<T = Thrall>(names: string[]): T[];
+    static all<T = Thrall>(): T[];
     /**
      * Id
      */
@@ -1354,6 +1393,9 @@ declare class Thrall extends MafiaClass {
     readonly current_modifiers: string;
 }
 declare class Vykea extends MafiaClass {
+    static get<T = Vykea>(name: string): T;
+    static get<T = Vykea>(names: string[]): T[];
+    static all<T = Vykea>(): T[];
     /**
      * Id
      */
@@ -1388,6 +1430,12 @@ declare class Vykea extends MafiaClass {
     readonly attack_element: Element;
 }
 declare class Slot extends MafiaClass {
+    static get<T = Slot>(name: string): T;
+    static get<T = Slot>(names: string[]): T[];
+    static all<T = Slot>(): T[];
 }
 declare class Stat extends MafiaClass {
+    static get<T = Stat>(name: string): T;
+    static get<T = Stat>(names: string[]): T[];
+    static all<T = Stat>(): T[];
 }

@@ -57,6 +57,10 @@ class GenerateTypings {
     const MafiaClassExpression = ts.createExpressionWithTypeArguments(undefined, GenerateTypings.MafiaClass);
     const MafiaClassHeritage = ts.createHeritageClause(ts.SyntaxKind.ExtendsKeyword, [MafiaClassExpression]);
 
+    const className = ts.factory.createIdentifier(proxyRecord.className);
+    const classNameType = ts.factory.createTypeReferenceNode(className);
+    const narrowedStatics = GenerateTypings.createMafiaClassProps(classNameType);
+
     const props = proxyRecord.fields.flatMap(f => {
       const type = ts.factory.createTypeReferenceNode(f.type, undefined);
       const tags: ts.JSDocTag[] = [];
@@ -64,27 +68,30 @@ class GenerateTypings {
       const doc = ts.factory.createJSDocComment(f.description, tags) as ts.PropertyDeclaration;
       return [doc, ts.factory.createPropertyDeclaration(undefined, [Modifiers.Readonly], f.name, undefined, type, undefined)];
     });
-    return ts.factory.createClassDeclaration(undefined, [Modifiers.Declare], proxyRecord.className, undefined, [MafiaClassHeritage], props);
+    return ts.factory.createClassDeclaration(undefined, [Modifiers.Declare], className, undefined, [MafiaClassHeritage], [...narrowedStatics, ...props]);
   }
 
-  static createMafiaClass() {
+  static createMafiaClassProps(typeDefault?: ts.TypeNode) {
     const t = ts.factory.createIdentifier("T");
     const typeT = ts.factory.createTypeReferenceNode(t);
     const typeArrayOfT = ts.factory.createArrayTypeNode(typeT);
+    const tParam = ts.factory.createTypeParameterDeclaration(t, undefined, typeDefault);
+
     const typeString = ts.factory.createTypeReferenceNode("string", undefined);
     const typeArrayOfString = ts.factory.createArrayTypeNode(typeString);
-
-    const tParam = ts.factory.createTypeParameterDeclaration(t, undefined, undefined);
 
     const name = ts.factory.createParameterDeclaration(undefined, undefined, undefined, "name", undefined, typeString, undefined);
     const names = ts.factory.createParameterDeclaration(undefined, undefined, undefined, "names", undefined, typeArrayOfString, undefined);
 
-
-    const props = [
+    return [
       ts.factory.createMethodDeclaration(undefined, [Modifiers.Static], undefined, "get", undefined, [tParam], [name], typeT, undefined),
       ts.factory.createMethodDeclaration(undefined, [Modifiers.Static], undefined, "get", undefined, [tParam], [names], typeArrayOfT, undefined),
       ts.factory.createMethodDeclaration(undefined, [Modifiers.Static], undefined, "all", undefined, [tParam], [], typeArrayOfT, undefined),
-    ];
+    ]
+  }
+
+  static createMafiaClass() {
+    const props = GenerateTypings.createMafiaClassProps();
     return ts.factory.createClassDeclaration(undefined, [Modifiers.Declare, Modifiers.Abstract], GenerateTypings.MafiaClass, undefined, undefined, props);
   }
 
