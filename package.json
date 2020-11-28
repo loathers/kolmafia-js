@@ -1,6 +1,6 @@
 {
   "name": "kolmafia",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Typings and stubs for the KoLmafia JS standard library",
   "main": "index.js",
   "repository": "https://github.com/Loathing-Associates-Scripting-Society/kolmafia-js",
