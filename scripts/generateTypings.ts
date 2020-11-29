@@ -188,7 +188,7 @@ class GenerateTypings {
       const prettyName = name.charAt(0).toUpperCase() + name.substr(1).replace(/_/g, " ");
       const description = "Returns:" in dataList ? this.turndown.turndown(dataList["Returns:"].innerHTML) : prettyName;
 
-      return { type, name, description };
+      return { type, name: camelCase(name), description };
     });
 
     return {
