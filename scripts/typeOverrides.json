@@ -1,5 +1,5 @@
 {
-    "nonProxyAggregateTypes": ["Slot", "Stat"],
+    "nonProxyEnumeratedTypes": ["Slot", "Stat"],
     "proxyRecords": {
         "Bounty.monster": "Monster",
         "Bounty.location": "Location",

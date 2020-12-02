@@ -1,9 +1,10 @@
-import { createPrinter, factory, SyntaxKind, TypeNode, NodeFlags, NewLineKind, PropertyDeclaration } from "typescript";
+import ts, { createPrinter, factory, SyntaxKind, TypeNode, NodeFlags, NewLineKind, PropertyDeclaration } from "typescript";
 import yargs from "yargs/yargs";
 import { promises as fs } from "fs";
 import { parse, HTMLElement } from "node-html-parser";
 import TurndownService from "turndown";
 import { camelCase } from "change-case";
+import fetch from "node-fetch";
 
 import typeOverrides from "./typeOverrides.json"; 
 import { type } from "os";
@@ -21,6 +22,15 @@ const TYPE_MAP = {
 
 const REF_PATTERN =  /(?<type>.*?) <a.*?>(?<name>.*?)<\/a>\((?<paramTypes>.*)\)/;
 const MAP_KEY_PATTERN = /\[([^:]+?)\]/g;
+
+const MAFIA_DATA_URL = "https://sourceforge.net/p/kolmafia/code/HEAD/tree/src/data";
+
+const MAFIA_DATA_MAPPING = [
+  { className: "Bounty", dataFile: "bounty", column: 0, id: false },
+  // class
+  { className: "Coinmaster", dataFile: "coinmasters", column: 0, id: false },
+  { className: "Effect", dataFile: "statuseffects", column: 1, id: true },
+];
 
 const MODIFIERS = {
   Abstract: factory.createModifier(SyntaxKind.AbstractKeyword),
@@ -68,13 +78,32 @@ class GenerateTypings {
     return "any";
   }
 
-  static aggregateTypeToTypeScript(proxyRecord: Await<ReturnType<GenerateTypings["parseProxyRecord"]>>) {
+  static enumeratedTypeToTypeScript(proxyRecord: Await<ReturnType<GenerateTypings["parseProxyRecord"]>>) {
     const MafiaClassExpression = factory.createExpressionWithTypeArguments(GenerateTypings.MafiaClass, undefined);
     const MafiaClassHeritage = factory.createHeritageClause(SyntaxKind.ExtendsKeyword, [MafiaClassExpression]);
 
     const className = factory.createIdentifier(proxyRecord.className);
     const classNameType = factory.createTypeReferenceNode(className);
-    const narrowedStatics = GenerateTypings.createMafiaClassProps(classNameType);
+
+    const str = factory.createTypeReferenceNode(factory.createIdentifier("string"));
+    const num = factory.createTypeReferenceNode(factory.createIdentifier("number"));
+    
+    console.log(proxyRecord.options?.options);
+
+    const possibleTypes = [
+      ...(proxyRecord.options?.id ? [num] : []),
+      ...(proxyRecord.options?.options.length > 0
+            ? proxyRecord.options.options.map(o => factory.createLiteralTypeNode(factory.createStringLiteral(o)))
+            : [str]
+         ),
+    ];
+
+    const optionsUnion = factory.createUnionTypeNode(possibleTypes);
+
+    const options = factory.createIdentifier(`${proxyRecord.className}Type`);
+    const optionsType = factory.createTypeAliasDeclaration(undefined, undefined, options, undefined, optionsUnion);
+
+    const narrowedStatics = GenerateTypings.createMafiaClassProps(classNameType, options);
 
     const props = proxyRecord.fields.flatMap(f => {
       const type = factory.createTypeReferenceNode(f.type, undefined);
@@ -82,20 +111,23 @@ class GenerateTypings {
       const doc = factory.createJSDocComment(f.description, undefined) as PropertyDeclaration;
       return [doc, factory.createPropertyDeclaration(undefined, [MODIFIERS.Readonly], f.name, undefined, type, undefined)];
     });
-    return factory.createClassDeclaration(undefined, undefined, className, undefined, [MafiaClassHeritage], [...narrowedStatics, ...props]);
+    return [
+      optionsType,
+      factory.createClassDeclaration(undefined, undefined, className, undefined, [MafiaClassHeritage], [...narrowedStatics, ...props]),
+    ];
   }
 
-  static createMafiaClassProps(typeDefault?: TypeNode) {
+  static createMafiaClassProps(typeDefault?: TypeNode, options?: ts.Identifier) {
     const t = factory.createIdentifier("T");
     const typeT = factory.createTypeReferenceNode(t);
     const typeArrayOfT = factory.createArrayTypeNode(typeT);
     const tParam = factory.createTypeParameterDeclaration(t, undefined, typeDefault);
 
-    const typeString = factory.createTypeReferenceNode("string", undefined);
-    const typeArrayOfString = factory.createArrayTypeNode(typeString);
+    const typeOptions = options ? factory.createTypeReferenceNode(options) : factory.createUnionTypeNode([factory.createTypeReferenceNode(factory.createIdentifier("string")), factory.createTypeReferenceNode(factory.createIdentifier("number"))]);
+    const typeArrayOfOptions = factory.createArrayTypeNode(typeOptions);
 
-    const name = factory.createParameterDeclaration(undefined, undefined, undefined, "name", undefined, typeString, undefined);
-    const names = factory.createParameterDeclaration(undefined, undefined, undefined, "names", undefined, typeArrayOfString, undefined);
+    const name = factory.createParameterDeclaration(undefined, undefined, undefined, "name", undefined, typeOptions, undefined);
+    const names = factory.createParameterDeclaration(undefined, undefined, undefined, "names", undefined, typeArrayOfOptions, undefined);
 
     return [
       factory.createMethodDeclaration(undefined, [MODIFIERS.Static], undefined, "get", undefined, [tParam], [name], typeT, undefined),
@@ -120,13 +152,29 @@ class GenerateTypings {
     return args.substring(8, args.length - 1).split(",").map(a => a.split("&nbsp;")[1]).slice(1);
   }
 
+  static async getListFromMafiaDataFile(dataFile: string, column: number) {
+    const result = await fetch(`${MAFIA_DATA_URL}/${dataFile}.txt?format=raw`);
+    const contents = await result.text();
+    return Array.from(new Set(contents.split("\n")
+      .filter((line, i) => line.length > 0 && line.charAt(0) !== "#" && i > 0)
+      .map(line => line.split("\t")[column])
+      .filter(c => !!c)).values());
+  }
+
   javadocsPath: string;
   refPath: string;
   turndown = new TurndownService();
+  enumeratedTypeOptions: { [enumeratedType: string]: { options: string[], id: boolean } } = {};
 
   constructor(javadocsPath: string, refPath: string) {
     this.javadocsPath = javadocsPath;
     this.refPath = refPath;
+  }
+
+  async getEnumeratedTypesOptions() {
+    await Promise.all(MAFIA_DATA_MAPPING.map(async ({ className, dataFile, column, id }) => {
+      this.enumeratedTypeOptions[className] = { options: await GenerateTypings.getListFromMafiaDataFile(dataFile, column), id };
+    }));
   }
 
   async parseJavadoc(fileName: string) {
@@ -194,23 +242,25 @@ class GenerateTypings {
     return {
       className,
       fields,
+      options: this.enumeratedTypeOptions[className],
     };
   }
 
   async run() {
+    await this.getEnumeratedTypesOptions();
     const proxyRecordList = await this.getListOfProxyRecords();
     const runtimeLibrary = await this.getRuntimeLibrary();
 
     const printer = createPrinter({ newLine: NewLineKind.LineFeed });
 
-    const aggregateTypes = [
+    const enumeratedTypes = [
       ...await Promise.all(proxyRecordList.map(a => this.parseProxyRecord(a))),
-      ...typeOverrides.nonProxyAggregateTypes.map(className => ({ className, fields: [] })),
+      ...typeOverrides.nonProxyEnumeratedTypes.map(className => ({ className, fields: [], options: this.enumeratedTypeOptions[className], })),
     ];
-    const aggregateTypeNodes = aggregateTypes.map(p => GenerateTypings.aggregateTypeToTypeScript(p));
+    const enumeratedTypeNodes = enumeratedTypes.flatMap(p => GenerateTypings.enumeratedTypeToTypeScript(p));
 
     const global = factory.createModuleDeclaration(
-      undefined, [MODIFIERS.Declare], factory.createIdentifier("global"), factory.createModuleBlock(aggregateTypeNodes),
+      undefined, [MODIFIERS.Declare], factory.createIdentifier("global"), factory.createModuleBlock(enumeratedTypeNodes),
       NodeFlags.ExportContext | NodeFlags.GlobalAugmentation | NodeFlags.ContextFlags
     );
 
