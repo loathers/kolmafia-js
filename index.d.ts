@@ -690,7 +690,7 @@ declare global {
         readonly type: string;
         /**
          * Kol internal type */
-        readonly kol_internal_type: string;
+        readonly kolInternalType: string;
         /**
          * Number */
         readonly number: number;
@@ -727,7 +727,7 @@ declare global {
         readonly property: string;
         /**
          * Available tokens */
-        readonly available_tokens: number;
+        readonly availableTokens: number;
         /**
          * Buys */
         readonly buys: boolean;
@@ -768,7 +768,7 @@ declare global {
         readonly descid: string;
         /**
          * Candy tier */
-        readonly candy_tier: number;
+        readonly candyTier: number;
     }
     class Element extends MafiaClass {
         static get<T = Element>(name: string): T;
@@ -799,31 +799,31 @@ declare global {
         readonly charges: number;
         /**
          * Drop name */
-        readonly drop_name: string;
+        readonly dropName: string;
         /**
          * Drop item */
-        readonly drop_item: Item;
+        readonly dropItem: Item;
         /**
          * Drops today */
-        readonly drops_today: number;
+        readonly dropsToday: number;
         /**
          * Drops limit */
-        readonly drops_limit: number;
+        readonly dropsLimit: number;
         /**
          * Fights today */
-        readonly fights_today: number;
+        readonly fightsToday: number;
         /**
          * Fights limit */
-        readonly fights_limit: number;
+        readonly fightsLimit: number;
         /**
          * Combat */
         readonly combat: boolean;
         /**
          * Physical damage */
-        readonly physical_damage: boolean;
+        readonly physicalDamage: boolean;
         /**
          * Elemental damage */
-        readonly elemental_damage: boolean;
+        readonly elementalDamage: boolean;
         /**
          * Block */
         readonly block: boolean;
@@ -832,22 +832,22 @@ declare global {
         readonly delevel: boolean;
         /**
          * Hp during combat */
-        readonly hp_during_combat: boolean;
+        readonly hpDuringCombat: boolean;
         /**
          * Mp during combat */
-        readonly mp_during_combat: boolean;
+        readonly mpDuringCombat: boolean;
         /**
          * Other action during combat */
-        readonly other_action_during_combat: boolean;
+        readonly otherActionDuringCombat: boolean;
         /**
          * Hp after combat */
-        readonly hp_after_combat: boolean;
+        readonly hpAfterCombat: boolean;
         /**
          * Mp after combat */
-        readonly mp_after_combat: boolean;
+        readonly mpAfterCombat: boolean;
         /**
          * Other action after combat */
-        readonly other_action_after_combat: boolean;
+        readonly otherActionAfterCombat: boolean;
         /**
          * Passive */
         readonly passive: boolean;
@@ -862,37 +862,37 @@ declare global {
         readonly attributes: string;
         /**
          * Poke level */
-        readonly poke_level: number;
+        readonly pokeLevel: number;
         /**
          * Poke level 2 power */
-        readonly poke_level_2_power: number;
+        readonly pokeLevel_2Power: number;
         /**
          * Poke level 2 hp */
-        readonly poke_level_2_hp: number;
+        readonly pokeLevel_2Hp: number;
         /**
          * Poke level 3 power */
-        readonly poke_level_3_power: number;
+        readonly pokeLevel_3Power: number;
         /**
          * Poke level 3 hp */
-        readonly poke_level_3_hp: number;
+        readonly pokeLevel_3Hp: number;
         /**
          * Poke level 4 power */
-        readonly poke_level_4_power: number;
+        readonly pokeLevel_4Power: number;
         /**
          * Poke level 4 hp */
-        readonly poke_level_4_hp: number;
+        readonly pokeLevel_4Hp: number;
         /**
          * Poke move 1 */
-        readonly poke_move_1: string;
+        readonly pokeMove_1: string;
         /**
          * Poke move 2 */
-        readonly poke_move_2: string;
+        readonly pokeMove_2: string;
         /**
          * Poke move 3 */
-        readonly poke_move_3: string;
+        readonly pokeMove_3: string;
         /**
          * Poke attribute */
-        readonly poke_attribute: string;
+        readonly pokeAttribute: string;
     }
     class Item extends MafiaClass {
         static get<T = Item>(name: string): T;
@@ -903,7 +903,7 @@ declare global {
         readonly name: string;
         /**
          * The name of this Item as it appears in your current Two Crazy Random Summer run. If you are not in a TCRS run, the regular Item name is returned. */
-        readonly tcrs_name: string;
+        readonly tcrsName: string;
         /**
          * The plural of this Item. If the official plural is not known, returns the name of this Item with an "s" appended. */
         readonly plural: string;
@@ -983,7 +983,7 @@ declare global {
         readonly combat: boolean;
         /**
          * `true` if this Item is usable in combat and is not consumed when doing so, else `false`. */
-        readonly combat_reusable: boolean;
+        readonly combatReusable: boolean;
         /**
          * `true` if this Item is usable, else `false`. This returns `true` regardless of whether this Item is consumed when used. */
         readonly usable: boolean;
@@ -1013,7 +1013,7 @@ declare global {
         readonly candy: boolean;
         /**
          * The candy type of this Item if it is a candy, or blank otherwise. Candy type can be one of "simple", "complex" or "unspaded". */
-        readonly candy_type: string;
+        readonly candyType: string;
         /**
          * `true` if this Item is a chocolate, else `false`. */
         readonly chocolate: boolean;
@@ -1025,10 +1025,10 @@ declare global {
         readonly buyer: Coinmaster;
         /**
          * The length of this Item's display name. */
-        readonly name_length: number;
+        readonly nameLength: number;
         /**
          * The noob Skill granted by absorbing this Item. */
-        readonly noob_skill: Skill;
+        readonly noobSkill: Skill;
     }
     class Location extends MafiaClass {
         static get<T = Location>(name: string): T;
@@ -1039,7 +1039,7 @@ declare global {
         readonly nocombats: boolean;
         /**
          * Combat percent */
-        readonly combat_percent: number;
+        readonly combatPercent: number;
         /**
          * Zone */
         readonly zone: string;
@@ -1057,22 +1057,22 @@ declare global {
         readonly bounty: Bounty;
         /**
          * Combat queue */
-        readonly combat_queue: string;
+        readonly combatQueue: string;
         /**
          * Noncombat queue */
-        readonly noncombat_queue: string;
+        readonly noncombatQueue: string;
         /**
          * Turns spent */
-        readonly turns_spent: number;
+        readonly turnsSpent: number;
         /**
          * Kisses */
         readonly kisses: number;
         /**
          * Recommended stat */
-        readonly recommended_stat: number;
+        readonly recommendedStat: number;
         /**
          * Water level */
-        readonly water_level: number;
+        readonly waterLevel: number;
         /**
          * Wanderers */
         readonly wanderers: boolean;
@@ -1089,52 +1089,52 @@ declare global {
         readonly id: number;
         /**
          * Base hp */
-        readonly base_hp: number;
+        readonly baseHp: number;
         /**
          * Base attack */
-        readonly base_attack: number;
+        readonly baseAttack: number;
         /**
          * Raw hp */
-        readonly raw_hp: number;
+        readonly rawHp: number;
         /**
          * Raw attack */
-        readonly raw_attack: number;
+        readonly rawAttack: number;
         /**
          * Raw defense */
-        readonly raw_defense: number;
+        readonly rawDefense: number;
         /**
          * Base defense */
-        readonly base_defense: number;
+        readonly baseDefense: number;
         /**
          * Base initiative */
-        readonly base_initiative: number;
+        readonly baseInitiative: number;
         /**
          * Raw initiative */
-        readonly raw_initiative: number;
+        readonly rawInitiative: number;
         /**
          * Attack element */
-        readonly attack_element: Element;
+        readonly attackElement: Element;
         /**
          * Defense element */
-        readonly defense_element: Element;
+        readonly defenseElement: Element;
         /**
          * Physical resistance */
-        readonly physical_resistance: number;
+        readonly physicalResistance: number;
         /**
          * Min meat */
-        readonly min_meat: number;
+        readonly minMeat: number;
         /**
          * Max meat */
-        readonly max_meat: number;
+        readonly maxMeat: number;
         /**
          * Min sprinkles */
-        readonly min_sprinkles: number;
+        readonly minSprinkles: number;
         /**
          * Max sprinkles */
-        readonly max_sprinkles: number;
+        readonly maxSprinkles: number;
         /**
          * Base mainstat exp */
-        readonly base_mainstat_exp: number;
+        readonly baseMainstatExp: number;
         /**
          * Phylum */
         readonly phylum: Phylum;
@@ -1155,16 +1155,16 @@ declare global {
         readonly images: { [image: string]: boolean };
         /**
          * Random modifiers */
-        readonly random_modifiers: { [randomModifier: string]: boolean };
+        readonly randomModifiers: { [randomModifier: string]: boolean };
         /**
          * Sub types */
-        readonly sub_types: { [subType: string]: boolean };
+        readonly subTypes: { [subType: string]: boolean };
         /**
          * Manuel name */
-        readonly manuel_name: string;
+        readonly manuelName: string;
         /**
          * Wiki name */
-        readonly wiki_name: string;
+        readonly wikiName: string;
         /**
          * Attributes */
         readonly attributes: string;
@@ -1198,16 +1198,16 @@ declare global {
         readonly image: string;
         /**
          * Level1 ability */
-        readonly level1_ability: string;
+        readonly level1Ability: string;
         /**
          * Level7 ability */
-        readonly level7_ability: string;
+        readonly level7Ability: string;
         /**
          * Level14 ability */
-        readonly level14_ability: string;
+        readonly level14Ability: string;
         /**
          * Level21 ability */
-        readonly level21_ability: string;
+        readonly level21Ability: string;
     }
     class Skill extends MafiaClass {
         static get<T = Skill>(name: string): T;
@@ -1289,7 +1289,7 @@ declare global {
         readonly skill: Skill;
         /**
          * Current modifiers */
-        readonly current_modifiers: string;
+        readonly currentModifiers: string;
     }
     class Vykea extends MafiaClass {
         static get<T = Vykea>(name: string): T;
@@ -1318,7 +1318,7 @@ declare global {
         readonly modifiers: string;
         /**
          * Attack element */
-        readonly attack_element: Element;
+        readonly attackElement: Element;
     }
     class Slot extends MafiaClass {
         static get<T = Slot>(name: string): T;

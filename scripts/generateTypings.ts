@@ -6,7 +6,6 @@ import TurndownService from "turndown";
 import { camelCase } from "change-case";
 
 import typeOverrides from "./typeOverrides.json"; 
-import { type } from "os";
 
 const zip = <T>(rows: T[][]) => rows[0].map((_, c) => rows.map(row => row[c]));
 
@@ -188,7 +187,7 @@ class GenerateTypings {
       const prettyName = name.charAt(0).toUpperCase() + name.substr(1).replace(/_/g, " ");
       const description = "Returns:" in dataList ? this.turndown.turndown(dataList["Returns:"].innerHTML) : prettyName;
 
-      return { type, name, description };
+      return { type, name: camelCase(name), description };
     });
 
     return {
