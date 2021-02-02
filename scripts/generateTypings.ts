@@ -15,7 +15,7 @@ const TYPE_MAP = {
   "long": "number",
   "double": "number",
   "java.lang.Integer": "number",
-  "boolean": "boolean",
+  "boolean": "boolean"
 };
 
 const REF_PATTERN =  /(?<type>.*?) <a.*?>(?<name>.*?)<\/a>\((?<paramTypes>.*)\)/;
@@ -41,7 +41,7 @@ class GenerateTypings {
   static MafiaClass = factory.createIdentifier("MafiaClass");
 
   static massageRefType(type: string) {
-    if (type === "aggregate") return "any";
+    if (type === "aggregate" || type === "null") return "any";
     return type.replace(MAP_KEY_PATTERN, (m, key) => `[key: ${key}]`);
   }
 
