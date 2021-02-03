@@ -2,7 +2,7 @@
   "name": "kolmafia",
   "version": "1.0.4",
   "description": "Typings and stubs for the KoLmafia JS standard library",
-  "main": "",
+  "main": "index",
   "types": "index",
   "repository": "https://github.com/Loathing-Associates-Scripting-Society/kolmafia-js",
   "author": "Sam Gaus",
