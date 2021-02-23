@@ -52,6 +52,7 @@ export function buysItem(master: Coinmaster, item: Item): boolean;
 export function canDrink(): boolean;
 export function canEat(): boolean;
 export function canEquip(item: Item): boolean;
+export function canEquip(familiar: Familiar): boolean;
 export function canEquip(familiar: Familiar, item: Item): boolean;
 export function canFaxbot(arg: Monster): boolean;
 export function canInteract(): boolean;

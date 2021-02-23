@@ -6,6 +6,8 @@
         "Class.primestat": "Stat",
         "Coinmaster.item": "Item",
         "Effect.all": "{ [source: string]: boolean }",
+        "Item.buyer": "Coinmaster",
+        "Item.seller": "Coinmaster",
         "Location.bounty": "Bounty",
         "Skill.class": "Class",
         "Thrall.skill": "Skill",
