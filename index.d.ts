@@ -214,6 +214,7 @@ export function getStackTrace(): { file: string; name: string; line: number; }[]
 export function getStash(): { [item: string]: number };
 export function getStorage(): { [item: string]: number };
 export function getVersion(): string;
+export function getWorkshed(): Item;
 export function gnomadsAvailable(): boolean;
 export function goalExists(check: string): boolean;
 export function groupString(string: string, regex: string): { [key: number]: { [key: number]: string } };
