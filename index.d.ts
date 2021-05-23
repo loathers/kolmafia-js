@@ -2,12 +2,12 @@ export function abort(string: string): void;
 export function abort(): void;
 export function addItemCondition(arg1: number, arg2: Item): void;
 export function addItemCondition(arg1: Item, arg2: number): void;
-export function adv1(locationValue: Location, adventuresUsedValue: number, filterFunction: string): boolean;
+export function adv1(locationValue: Location, adventuresUsedValue: number, filterFunction: (round: number, monster: Monster, text: string) => string): boolean;
 export function advCost(skill: Skill): number;
 export function adventure(arg1: Location, arg2: number): boolean;
-export function adventure(arg1: Location, arg2: number, filterFunction: string): boolean;
+export function adventure(arg1: Location, arg2: number, filterFunction: (round: number, monster: Monster, text: string) => string): boolean;
 export function adventure(arg1: number, arg2: Location): boolean;
-export function adventure(arg1: number, arg2: Location, filterFunction: string): boolean;
+export function adventure(arg1: number, arg2: Location, filterFunction: (round: number, monster: Monster, text: string) => string): boolean;
 export function allMonstersWithId(): { [monster: string]: boolean };
 export function allNormalOutfits(): string[];
 export function appearanceRates(location: Location): { [monster: string]: number };
@@ -51,7 +51,7 @@ export function buyUsingStorage(arg1: number, arg2: Item, arg3: number): number;
 export function buysItem(master: Coinmaster, item: Item): boolean;
 export function canDrink(): boolean;
 export function canEat(): boolean;
-export function canEquip(item: Item): boolean;
+export function canEquip(itemOrFamiliar: Item): boolean;
 export function canEquip(familiar: Familiar): boolean;
 export function canEquip(familiar: Familiar, item: Item): boolean;
 export function canFaxbot(arg: Monster): boolean;
@@ -218,6 +218,7 @@ export function getWorkshed(): Item;
 export function gnomadsAvailable(): boolean;
 export function goalExists(check: string): boolean;
 export function groupString(string: string, regex: string): { [key: number]: { [key: number]: string } };
+export function guildAvailable(): boolean;
 export function guildStoreAvailable(): boolean;
 export function handlingChoice(): boolean;
 export function haveBartender(): boolean;
@@ -257,6 +258,7 @@ export function insert(buffer: string, index: number, s: string): string;
 export function isAccessible(master: Coinmaster): boolean;
 export function isBanished(arg: Monster): boolean;
 export function isCoinmasterItem(item: Item): boolean;
+export function isDarkMode(): boolean;
 export function isDiscardable(item: Item): boolean;
 export function isDisplayable(item: Item): boolean;
 export function isFamiliarEquipmentLocked(): boolean;
@@ -394,11 +396,14 @@ export function myPokeFam(arg: number): Familiar;
 export function myPp(): number;
 export function myPrimestat(): Stat;
 export function myRain(): number;
+export function myRobotEnergy(): number;
+export function myRobotScraps(): number;
 export function myServant(): Servant;
 export function mySessionAdv(): number;
 export function mySessionItems(): { [item: string]: number };
 export function mySessionItems(item: Item): number;
 export function mySessionMeat(): number;
+export function mySessionResults(): { [key: string]: number };
 export function mySign(): string;
 export function mySoulsauce(): number;
 export function mySpleenUse(): number;
@@ -901,135 +906,130 @@ declare global {
         static get<T = Item>(names: string[]): T[];
         static all<T = Item>(): T[];
         /**
-         * The name of this Item. */
+         * The name */
         readonly name: string;
         /**
-         * The name of this Item as it appears in your current Two Crazy Random Summer run. If you are not in a TCRS run, the regular Item name is returned. */
+         * The TCRS name */
         readonly tcrsName: string;
         /**
-         * The plural of this Item. If the official plural is not known, returns the name of this Item with an "s" appended. */
+         * The plural */
         readonly plural: string;
         /**
-         * The identifier used to see the description of this Item. */
+         * The descid */
         readonly descid: string;
         /**
-         * The filename of the image associated with this Item. */
+         * The filename of the image */
         readonly image: string;
         /**
-         * The filename of the small image associated with this Item. For items with an image that is usually larger than 30x30, this is their 30x30 equivalent. For example, the images for "folders" from the "over-the-shoulder Folder Holder" will normally be 100x100 but this will return a 30x30 equivalent. */
+         * The filename of the small image */
         readonly smallimage: string;
         /**
-         * The level requirement for consuming or equipping this Item. */
+         * The level requirement */
         readonly levelreq: number;
         /**
-         * The quality of this Item if it is a consumable, or blank otherwise. Quality can be one of "decent", "crappy", "good", "awesome", "EPIC" or "". */
+         * The quality */
         readonly quality: string;
         /**
-         * The range of adventures gained from consuming this Item. The string will either contain the adventures for invariant gains, or a hyphen-separated minimum and maximum for variant gains. */
+         * The range of adventures gained */
         readonly adventures: string;
         /**
-         * The range of muscle substats gained from consuming this Item. The string will either contain the substats for invariant gains, or a hyphen-separated minimum and maximum for variant gains. Note that substat gains can be negative. */
+         * The range of muscle substats gained */
         readonly muscle: string;
         /**
-         * The range of mysticality substats gained from consuming this Item. The string will either contain the substats for invariant gains, or a hyphen-separated minimum and maximum for variant gains. Note that substat gains can be negative. */
+         * The range of mysticality substats gained */
         readonly mysticality: string;
         /**
-         * The range of moxie substats gained from consuming this Item. The string will either contain the substats for invariant gains, or a hyphen-separated minimum and maximum for variant gains. Note that substat gains can be negative. */
+         * The range of moxie substats gained */
         readonly moxie: string;
         /**
-         * The stomach size of this Item. If this Item is not edible, returns 0. */
+         * The stomach size */
         readonly fullness: number;
         /**
-         * The liver size of this Item. If this Item is not drinkable, returns 0. */
+         * The liver size */
         readonly inebriety: number;
         /**
-         * The spleen size of this Item. If this Item is not chewable, returns 0. */
+         * The spleen size */
         readonly spleen: number;
         /**
-         * The minimum HP restored by consuming this Item. */
+         * The minimum HP restored */
         readonly minhp: number;
         /**
-         * The maximum HP restored by consuming this Item. */
+         * The maximum HP restored */
         readonly maxhp: number;
         /**
-         * The minimum MP restored by consuming this Item. */
+         * The minimum MP restored */
         readonly minmp: number;
         /**
-         * The maximum MP restored by consuming this Item. */
+         * The maximum MP restored */
         readonly maxmp: number;
         /**
-         * The number of daily uses remaining for this Item. */
+         * The number of daily uses left */
         readonly dailyusesleft: number;
         /**
-         * The notes that exist for this Item. Examples of (comma-separated) contents are:
-         * 
-         * *   The name and duration of any effects granted by consumption, if applicable.
-         * *   Items dropped when this Item is consumed, if applicable.
-         * *   Tags relevant to game mechanics (such as "MARTINI", "BEER" and "SAUCY")
-         * *   "Unspaded" */
+         * The notes */
         readonly notes: string;
         /**
-         * `true` if this Item is a quest item, else `false`. */
+         * Whether the Item is a quest item */
         readonly quest: boolean;
         /**
-         * `true` if this Item is a gift item, else `false`. */
+         * Whether the Item is a gift item */
         readonly gift: boolean;
         /**
-         * `true` if this Item is tradeable, else `false`. */
+         * Whether the Item is tradeable */
         readonly tradeable: boolean;
         /**
-         * `true` if this Item is discardable, else `false`. */
+         * Whether the Item is a discardable */
         readonly discardable: boolean;
         /**
-         * `true` if this Item usable in combat, else `false`. This returns `true` regardless of whether this Item is consumed when used in combat. */
+         * Whether the Item is usable in combat */
         readonly combat: boolean;
         /**
-         * `true` if this Item is usable in combat and is not consumed when doing so, else `false`. */
+         * Whether the Item is combat reusable */
         readonly combatReusable: boolean;
         /**
-         * `true` if this Item is usable, else `false`. This returns `true` regardless of whether this Item is consumed when used. */
+         * Whether the Item is usable */
         readonly usable: boolean;
         /**
-         * `true` if this Item is usable and is not consumed when doing so, else `false`. */
+         * Whether the Item is reusable */
         readonly reusable: boolean;
         /**
-         * `true` if more than one of this Item can be used at once, else `false`. */
+         * Whether the Item is multiusable */
         readonly multi: boolean;
         /**
-         * `true` if this Item is a "fancy" ingredient, else `false`. */
+         * Whether the Item is a "fancy" ingredient */
         readonly fancy: boolean;
         /**
-         * `true` if this Item is a meatpasting ingredient, else `false`. */
+         * Whether the Item is a meatpasting ingredient */
         readonly pasteable: boolean;
         /**
-         * `true` if this Item is a meatsmithing ingredient, else `false`. */
+         * Whether the Item is a meatsmithing ingredient */
         readonly smithable: boolean;
         /**
-         * `true` if this Item is a cooking ingredient, else `false`. */
+         * Whether the Item is a cooking ingredient */
         readonly cookable: boolean;
         /**
-         * `true` if this Item is a cocktailcrafting ingredient, else `false`. */
+         * Whether the Item is a cocktailcrafting ingredient */
         readonly mixable: boolean;
         /**
-         * `true` if this Item is a candy, else `false`. */
+         * Whether the Item is a candy */
         readonly candy: boolean;
         /**
-         * The candy type of this Item if it is a candy, or blank otherwise. Candy type can be one of "simple", "complex" or "unspaded". */
+         * The candy type */
         readonly candyType: string;
         /**
-         * `true` if this Item is a chocolate, else `false`. */
+         * Whether the Item is a chocolate */
         readonly chocolate: boolean;
         /**
-         * Which Coinmaster sells this Item, if any. */
+         * The coinmaster who sells this Item */
         readonly seller: Coinmaster;
         /**
-         * Which Coinmaster buys this Item, if any. */
+         * The Coinmaster who buys this Item */
         readonly buyer: Coinmaster;
         /**
-         * The length of this Item's display name. */
+         * The length of the display name */
         readonly nameLength: number;
         /**
-         * The noob Skill granted by absorbing this Item. */
+         * The noob Skill granted */
         readonly noobSkill: Skill;
     }
     class Location extends MafiaClass {

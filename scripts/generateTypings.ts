@@ -20,10 +20,12 @@ const zip = <T>(rows: T[][]) =>
 
 const TYPE_MAP = {
   "java.lang.String": "string",
+  "String": "string",
   int: "number",
   long: "number",
   double: "number",
   "java.lang.Integer": "number",
+  "Integer": "number",
   boolean: "boolean",
 };
 
@@ -76,7 +78,7 @@ class GenerateTypings {
     method: HTMLElement,
     dl: ReturnType<typeof GenerateTypings.parseDataList>
   ) {
-    const javaType = method.querySelector("span.returnType")
+    const javaType = method.querySelector("span.return-type")
       .innerText as JavaType;
 
     if (TYPE_MAP[javaType]) {
@@ -245,12 +247,26 @@ class GenerateTypings {
     );
   }
 
-  static parseArgs(args: string) {
+  static parseArgs(name: string, args: string) {
     return args
       .substring(8, args.length - 1)
       .split(",")
       .map((a) => a.split("&nbsp;")[1])
       .slice(1);
+  }
+
+  static adjustForJsCallbacks(name: string, params: string[]) {
+    const combatFilterSignature = "(round: number, monster: Monster, text: string) => string";
+    switch (name) {
+      case "adv1":
+      case "adventure":
+        if (params.length >= 3) params[2] = combatFilterSignature;
+        break;
+      case "run_combat":
+        if (params.length >= 1) params[0] = combatFilterSignature;
+        break;
+    }
+    return params;
   }
 
   javadocsPath: string;
@@ -278,14 +294,17 @@ class GenerateTypings {
         const match = l.match(REF_PATTERN);
         if (!match || !match.groups) return null;
         const { name, type, paramTypes } = match.groups;
+
+        const pt = GenerateTypings.adjustForJsCallbacks(name, paramTypes
+          ? paramTypes
+            .split(", ")
+            .map((t) => GenerateTypings.massageRefType(t))
+          : []);
+
         return {
           name,
           type: GenerateTypings.massageRefType(type),
-          paramTypes: paramTypes
-            ? paramTypes
-                .split(", ")
-                .map((t) => GenerateTypings.massageRefType(t))
-            : [],
+          paramTypes: pt,
         };
       })
       .filter(notNull);
@@ -295,17 +314,20 @@ class GenerateTypings {
     const refs = await this.parseRef();
     const root = await this.parseJavadoc("RuntimeLibrary");
     const methods = root
-      .querySelectorAll(".memberSummary tbody .colSecond code")
+      .querySelectorAll(".method-summary-table.col-second code")
       .map((m) => {
-        const name = camelCase(m.querySelector(".memberNameLink").innerText);
+        const nameContainer = m.querySelector(".member-name-link");
+        const name = camelCase(nameContainer.innerText);
         const signature = m.childNodes[1];
         const params = signature
-          ? GenerateTypings.parseArgs(signature.innerText)
+          ? GenerateTypings.parseArgs(name, m.innerText)
           : [];
+
         return { name, params };
       });
 
-    const res = refs
+
+    return refs
       .flatMap((r) =>
         methods
           .filter(
@@ -313,8 +335,19 @@ class GenerateTypings {
           )
           .map((m) => ({ ...r, params: m.params }))
       )
-      .filter((r) => r.name !== "delete");
-    return res;
+      .filter((r) => r.name !== "delete")
+      .map((r) => {
+        const identifier = `${r.name}[${r.paramTypes.join(",")}]`;
+        // @ts-ignore
+        const overrides = typeOverrides.paramNames[identifier];
+        if (overrides) {
+          return {
+            ...r, params: r.params.map((p, i) => overrides[i] || p)
+          };
+        }
+
+        return r;
+      });
   }
 
   async getRuntimeLibrary() {
@@ -326,7 +359,7 @@ class GenerateTypings {
   async getListOfProxyRecords() {
     const root = await this.parseJavadoc("parsetree/ProxyRecordValue");
     const nodes = root.querySelectorAll(
-      "section.nestedClassSummary div.memberSummary tbody th.colSecond code span a"
+      "section.nested-class-summary .col-second code span a"
     );
     return [...nodes].map((a) =>
       (a.getAttribute("href") || "").replace(/\.html$/, "")
@@ -341,17 +374,19 @@ class GenerateTypings {
       .innerText.replace(/^Class ProxyRecordValue.(\w+)Proxy$/, "$1");
 
     const methodList = root.querySelectorAll(
-      "section.methodDetails section.detail"
+      "section.method-details section.detail"
     );
 
     const fields = [...methodList].map((method) => {
       const dataList = GenerateTypings.parseDataList(method);
-      const name = method
-        .querySelector("span.memberName")
-        .innerText.replace(/^get_/, "");
+      const nameContainer = method
+        .querySelector("span.element-name");
+
+      const name = nameContainer.innerText.replace(/^get_/, "");
 
       const fieldPath =
         `${className}.${name}` as keyof typeof typeOverrides.proxyRecords;
+
       const type =
         typeOverrides.proxyRecords[fieldPath] ||
         GenerateTypings.resolveType(method, dataList);

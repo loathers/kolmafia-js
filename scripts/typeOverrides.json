@@ -8,6 +8,7 @@
         "Effect.all": "{ [source: string]: boolean }",
         "Item.buyer": "Coinmaster",
         "Item.seller": "Coinmaster",
+        "Item.noob_skill": "Skill",
         "Location.bounty": "Bounty",
         "Skill.class": "Class",
         "Thrall.skill": "Skill",
@@ -22,5 +23,8 @@
         "Monster.images": "{ [image: string]: boolean }",
         "Monster.random_modifiers": "{ [randomModifier: string]: boolean }",
         "Monster.sub_types": "{ [subType: string]: boolean }"
+    },
+    "paramNames": {
+        "canEquip[Familiar]": ["familiar"]
     }
 }
