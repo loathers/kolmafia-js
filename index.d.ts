@@ -503,7 +503,7 @@ export function runChoice(decision: number, extra: string): string;
 export function runChoice(decision: number, extra: boolean): string;
 export function runChoice(decision: number, custom: boolean, more: string): string;
 export function runCombat(): string;
-export function runCombat(filterFunction: string): string;
+export function runCombat(filterFunction: (round: number, monster: Monster, text: string) => string): string;
 export function runTurn(): string;
 export function runaway(): string;
 export function scrapPockets(): { [key: number]: number };

@@ -262,7 +262,7 @@ class GenerateTypings {
       case "adventure":
         if (params.length >= 3) params[2] = combatFilterSignature;
         break;
-      case "run_combat":
+      case "runCombat":
         if (params.length >= 1) params[0] = combatFilterSignature;
         break;
     }
