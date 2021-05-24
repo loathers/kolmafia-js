@@ -256,7 +256,7 @@ class GenerateTypings {
   }
 
   static adjustForJsCallbacks(name: string, params: string[]) {
-    const combatFilterSignature = "string | (round: number, monster: Monster, text: string) => string";
+    const combatFilterSignature = "string | ((round: number, monster: Monster, text: string) => string)";
     switch (name) {
       case "adv1":
       case "adventure":
