@@ -1341,14 +1341,4 @@ declare global {
          * Attack element */
         readonly attackElement: Element;
     }
-    class Slot extends MafiaClass {
-        static get<T = Slot>(name: string): T;
-        static get<T = Slot>(names: string[]): T[];
-        static all<T = Slot>(): T[];
-    }
-    class Stat extends MafiaClass {
-        static get<T = Stat>(name: string): T;
-        static get<T = Stat>(names: string[]): T[];
-        static all<T = Stat>(): T[];
-    }
 }
