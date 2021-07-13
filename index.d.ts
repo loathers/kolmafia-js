@@ -1,5 +1,5 @@
-export function abort(string: string): void;
-export function abort(): void;
+export function abort(string: string): never;
+export function abort(): never;
 export function addItemCondition(arg1: number, arg2: Item): void;
 export function addItemCondition(arg1: Item, arg2: number): void;
 export function adv1(locationValue: Location, adventuresUsedValue: number, filterFunction: string | ((round: number, monster: Monster, text: string) => string)): boolean;

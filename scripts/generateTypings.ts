@@ -295,6 +295,8 @@ class GenerateTypings {
         if (!match || !match.groups) return null;
         const { name, type, paramTypes } = match.groups;
 
+        const returnType = name === 'abort' ? 'never' : GenerateTypings.massageRefType(type);
+
         const pt = GenerateTypings.adjustForJsCallbacks(name, paramTypes
           ? paramTypes
             .split(", ")
@@ -303,7 +305,7 @@ class GenerateTypings {
 
         return {
           name,
-          type: GenerateTypings.massageRefType(type),
+          type: returnType,
           paramTypes: pt,
         };
       })
