@@ -25,6 +25,22 @@
         "Monster.sub_types": "{ [subType: string]: boolean }"
     },
     "paramNames": {
-        "canEquip[Familiar]": ["familiar"]
+        "canEquip[Familiar]": ["familiar"],
+        "buy[Item,number]": ["item", "quantity"],
+        "buy[Item,number,number]": ["item", "quantity", "price"],
+        "buy[number,Item,number]": ["quantity", "item", "price"],
+        "buy[number,Item]": ["quantity", "item"],
+        "buy[Coinmaster,number,Item]": ["coinmaster", "quantity", "item"],
+        "buyUsingStorage[Item,number]": ["item", "quantity"],
+        "buyUsingStorage[Item,number,number]": ["item","quantity", "price"],
+        "buyUsingStorage[number,Item,number]": [
+            "quantity",
+            "item",
+            "price"
+        ],
+        "buyUsingStorage[number,Item]": [
+            "quantity",
+            "item"
+        ]
     }
 }
