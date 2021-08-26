@@ -1044,8 +1044,8 @@ declare global {
         readonly noobSkill: Skill;
     }
     class Location extends MafiaClass {
-        static get<T = Location>(name: string): T;
-        static get<T = Location>(names: string[]): T[];
+        static get<T = Location>(name: (string | number)): T;
+        static get<T = Location>(names: (string | number)[]): T[];
         static all<T = Location>(): T[];
         /**
          * Nocombats */
@@ -1282,8 +1282,8 @@ declare global {
         readonly timescast: number;
     }
     class Slot extends MafiaClass {
-        static get<T = Slot>(name: string): T;
-        static get<T = Slot>(names: string[]): T[];
+        static get<T = Slot>(name: (string | number)): T;
+        static get<T = Slot>(names: (string | number)[]): T[];
         static all<T = Slot>(): T[];
     }
     class Stat extends MafiaClass {

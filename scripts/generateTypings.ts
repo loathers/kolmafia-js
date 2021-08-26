@@ -104,7 +104,8 @@ class GenerateTypings {
       [MafiaClassExpression]
     );
 
-    const acceptNumbers = ["Effect", "Familiar", "Item", "Monster", "Servant", "Skill", "Thrall"];
+    // Actually all of them accept numbers but only these ones are useful (all others return "none")
+    const acceptNumbers = ["Effect", "Familiar", "Item", "Location", "Monster", "Servant", "Skill", "Slot", "Thrall"];
 
     const className = factory.createIdentifier(proxyRecord.className);
     const classNameType = factory.createTypeReferenceNode(className);
