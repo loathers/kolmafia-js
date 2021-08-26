@@ -104,10 +104,12 @@ class GenerateTypings {
       [MafiaClassExpression]
     );
 
+    const acceptNumbers = ["Effect", "Familiar", "Item", "Monster", "Servant", "Skill", "Thrall"];
+
     const className = factory.createIdentifier(proxyRecord.className);
     const classNameType = factory.createTypeReferenceNode(className);
     const narrowedStatics =
-      GenerateTypings.createMafiaClassProps(classNameType);
+      GenerateTypings.createMafiaClassProps(acceptNumbers.includes(proxyRecord.className) ? "(string | number)" : "string", classNameType);
 
     const props = proxyRecord.fields.flatMap((f) => {
       const type = factory.createTypeReferenceNode(f.type, undefined);
@@ -138,7 +140,7 @@ class GenerateTypings {
     );
   }
 
-  static createMafiaClassProps(typeDefault?: TypeNode) {
+  static createMafiaClassProps(inputType = "string", typeDefault?: TypeNode) {
     const t = factory.createIdentifier("T");
     const typeT = factory.createTypeReferenceNode(t);
     const typeArrayOfT = factory.createArrayTypeNode(typeT);
@@ -148,8 +150,8 @@ class GenerateTypings {
       typeDefault
     );
 
-    const typeString = factory.createTypeReferenceNode("string", undefined);
-    const typeArrayOfString = factory.createArrayTypeNode(typeString);
+    const typeInput = factory.createTypeReferenceNode(inputType, undefined);
+    const typeArrayofInput = factory.createArrayTypeNode(typeInput);
 
     const name = factory.createParameterDeclaration(
       undefined,
@@ -157,7 +159,7 @@ class GenerateTypings {
       undefined,
       "name",
       undefined,
-      typeString,
+      typeInput,
       undefined
     );
     const names = factory.createParameterDeclaration(
@@ -166,7 +168,7 @@ class GenerateTypings {
       undefined,
       "names",
       undefined,
-      typeArrayOfString,
+      typeArrayofInput,
       undefined
     );
 
