@@ -432,6 +432,7 @@ export function numericModifier(familiar: Familiar, modifier: string, weight: nu
 export function outfit(outfit: string): boolean;
 export function outfitPieces(outfit: string): Item[];
 export function outfitTattoo(outfit: string): string;
+export function outfitTreats(outfit: string): { [item: string]: number };
 export function overdrink(item: Item): boolean;
 export function overdrink(arg1: Item, arg2: number): boolean;
 export function overdrink(arg1: number, arg2: Item): boolean;
