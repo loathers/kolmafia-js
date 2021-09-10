@@ -1,3 +1,5 @@
+/**
+ * Immediately halts the current script and all queued functions. */
 export function abort(string: string): never;
 export function abort(): never;
 export function addItemCondition(arg1: number, arg2: Item): void;
@@ -10,6 +12,8 @@ export function adventure(arg1: Location, arg2: number): boolean;
 export function adventure(arg1: Location, arg2: number, filterFunction: string | ((round: number, monster: Monster, text: string) => string)): boolean;
 export function adventure(arg1: number, arg2: Location): boolean;
 export function adventure(arg1: number, arg2: Location, filterFunction: string | ((round: number, monster: Monster, text: string) => string)): boolean;
+/**
+ * Returns a map of all monsters that have a non-zero monster ID. */
 export function allMonstersWithId(): { [monster: string]: boolean };
 export function allNormalOutfits(): string[];
 export function appearanceRates(location: Location): { [monster: string]: number };
@@ -21,6 +25,8 @@ export function autosell(arg1: number, arg2: Item): boolean;
 export function autosellPrice(item: Item): number;
 export function availableAmount(arg: Item): number;
 export function availableChoiceOptions(): { [key: number]: string };
+/**
+ * Returns all available choice options in the current (or last) choice adventure the player encountered. */
 export function availableChoiceOptions(spoilers: boolean): { [key: number]: string };
 export function availableChoiceSelectInputs(decision: number): { [key: string]: { [key: string]: string } };
 export function availableChoiceTextInputs(decision: number): { [key: string]: string };
@@ -77,13 +83,23 @@ export function choiceFollowsFight(): boolean;
 export function classModifier(arg: string, modifier: string): Class;
 export function classModifier(arg: Item, modifier: string): Class;
 export function clear(arg: any): void;
+/**
+ * Clears all queued booze helper items. */
 export function clearBoozeHelper(): void;
+/**
+ * Clears all queued food helper items. */
 export function clearFoodHelper(): void;
+/**
+ * Executes a string as a gCLI command. Returns <code>true</code> on success, <code>false</code> on failure. */
 export function cliExecute(string: string): boolean;
+/**
+ * Executes a gCLI command, capturing and returning the gCLI output. */
 export function cliExecuteOutput(string: string): string;
 export function closetAmount(arg: Item): number;
 export function combatManaCostModifier(): number;
 export function combatRateModifier(): number;
+/**
+ * Returns true if the first string contains the second string. */
 export function containsText(source: string, search: string): boolean;
 export function council(): void;
 export function count(arg: any): number;
@@ -134,6 +150,8 @@ export function elementalResistance(): number;
 export function elementalResistance(arg: Monster): number;
 export function emptyCloset(): boolean;
 export function enable(name: string): void;
+/**
+ * Checks whether a string ends with a suffix string. (case-sensitive) */
 export function endsWith(source: string, suffix: string): boolean;
 export function enthroneFamiliar(familiar: Familiar): boolean;
 export function entityDecode(arg: string): string;
@@ -162,6 +180,8 @@ export function faxbot(monsterName: Monster): boolean;
 export function faxbot(monsterName: Monster, botName: string): boolean;
 export function fightFollowsChoice(): boolean;
 export function fileToArray(var1: string): { [key: number]: string };
+/**
+ * Loads the entire contents of a text file into a buffer. */
 export function fileToBuffer(var1: string): string;
 export function fileToMap(var1: string, var2: any): boolean;
 export function fileToMap(var1: string, var2: any, var3: boolean): boolean;
@@ -265,6 +285,8 @@ export function insert(buffer: string, index: number, s: string): string;
 export function isAccessible(master: Coinmaster): boolean;
 export function isBanished(arg: Monster): boolean;
 export function isCoinmasterItem(item: Item): boolean;
+/**
+ * Checks if the current KoLmafia theme is dark mode. */
 export function isDarkMode(): boolean;
 export function isDiscardable(item: Item): boolean;
 export function isDisplayable(item: Item): boolean;
@@ -322,6 +344,8 @@ export function makeUrl(arg1: string, arg2: boolean, arg3: boolean): string;
 export function mallPrice(item: Item): number;
 export function mallPrices(arg: { [key: number]: boolean }): number;
 export function mallPrices(arg: string): number;
+/**
+ * Updates the mall price for a category of items, and returns the number of items searched. */
 export function mallPrices(category: string, tiers: string): number;
 export function manaCostModifier(): number;
 export function mapToFile(var1: any, var2: string): boolean;
@@ -464,9 +488,15 @@ export function print(): void;
 export function print(string: string): void;
 export function print(string: string, color: string): void;
 export function printHtml(string: string): void;
+/**
+ * Returns the default value of a property, or an empty string if a default value does not exist. */
 export function propertyDefaultValue(nameValue: string): string;
 export function propertyExists(nameValue: string): boolean;
+/**
+ * Checks whether a property exists. */
 export function propertyExists(nameValue: string, globalValue: boolean): boolean;
+/**
+ * Checks if a property has a built-in default value. */
 export function propertyHasDefault(nameValue: string): boolean;
 export function pullsRemaining(): number;
 export function putCloset(arg1: number): boolean;
@@ -491,7 +521,11 @@ export function refreshStatus(): boolean;
 export function removeItemCondition(arg1: number, arg2: Item): void;
 export function removeItemCondition(arg1: Item, arg2: number): void;
 export function removeProperty(nameValue: string): string;
+/**
+ * Removes or resets a property and returns its previous value. */
 export function removeProperty(nameValue: string, globalValue: boolean): string;
+/**
+ * Renames a property. Returns <code>true</code> on success, <code>false</code> on failure. */
 export function renameProperty(oldNameValue: string, newNameValue: string): boolean;
 export function replace(buffer: string, start: number, finish: number, s: string): string;
 export function replaceString(source: string, searchValue: string, replaceValue: string): string;
@@ -539,6 +573,8 @@ export function spleenLimit(): number;
 export function splitString(string: string): string[];
 export function splitString(string: string, regex: string): string[];
 export function squareRoot(val: number): number;
+/**
+ * Checks whether a string starts with a prefix string. (case-sensitive) */
 export function startsWith(source: string, prefix: string): boolean;
 export function stashAmount(arg: Item): number;
 export function statBonusToday(): Stat;
@@ -676,9 +712,13 @@ export function userPrompt(message: string): string;
 export function userPrompt(message: string, options: any): string;
 export function userPrompt(message: string, timeOut: number, defaultString: string): string;
 export function visit(master: Coinmaster): boolean;
+/**
+ * Returns the original HTML source of the page being overridden inside a relay override script. */
 export function visitUrl(): string;
 export function visitUrl(string: string): string;
 export function visitUrl(string: string, usePostMethod: boolean): string;
+/**
+ * Visits a web page and returns its HTML source. */
 export function visitUrl(string: string, usePostMethod: boolean, encoded: boolean): string;
 export function votingBoothInitiatives(clss: Class, path: number, daycount: number): { [key: string]: boolean };
 export function votingBoothInitiatives(clss: number, path: number, daycount: number): { [key: string]: boolean };

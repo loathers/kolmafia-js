@@ -1,19 +1,18 @@
-import {
-  createPrinter,
-  factory,
-  SyntaxKind,
-  TypeNode,
-  NodeFlags,
-  NewLineKind,
-  PropertyDeclaration,
-} from "typescript";
-import yargs from "yargs/yargs";
+import ts, { TypeNode, PropertyDeclaration } from "typescript";
+import yargs from "yargs";
 import { promises as fs } from "fs";
-import { parse, HTMLElement } from "node-html-parser";
+import nhp, { HTMLElement } from "node-html-parser";
 import TurndownService from "turndown";
 import { camelCase } from "change-case";
+import fetch from "node-fetch";
+import { set } from "lodash-es";
 
 import typeOverrides from "./typeOverrides.json";
+import { kmail } from "../contrib/zlib.ash";
+
+// @ts-ignore
+const { parse } = nhp;
+const { createPrinter, factory, SyntaxKind, NodeFlags, NewLineKind } = ts;
 
 const zip = <T>(rows: T[][]) =>
   rows[0].map((_, c) => rows.map((row) => row[c]));
@@ -39,6 +38,44 @@ const MODIFIERS = {
   Readonly: factory.createModifier(SyntaxKind.ReadonlyKeyword),
   Static: factory.createModifier(SyntaxKind.StaticKeyword),
 };
+
+const docscache = {} as { [key: string]: Object | null };
+
+async function parseWikiPage(f: string) {
+  const url = `http://wiki.kolmafia.us/index.php/${f}`;
+  if (docscache[url] === undefined) {
+    const req = await fetch(`https://wiki.kolmafia.us/api.php?action=query&prop=revisions&titles=${f}&rvslots=*&rvprop=content&formatversion=2&format=json`);
+    const json = await req.json() as any;
+    const source = json.query.pages?.[0].revisions?.[0].slots.main.content;
+
+    if (!source) {
+      docscache[url] = null;
+      return null;
+    }
+
+    const regex = /\n\|(?<key>[^=]+)=(?<value>.*?)(?=\n\|)/gs;
+    let m;
+    const doc = {} as any;
+    while((m = regex.exec(source)) !== null) {
+      if (!m.groups) continue;
+      const { key, value } = m.groups;
+      set(doc, key, value);
+    }
+    for (let k in doc) {
+      if (k.startsWith("function")) {
+        const params = Object.entries(doc[k as keyof typeof doc])
+          .map(([k,v]: [any, any]) => k.startsWith("param") ? v.type : null)
+          .filter(v => v !== null)
+          .join(",");
+        doc[k as keyof typeof doc].identifier = `${doc.name}[${params}]`;
+      }
+    }
+    docscache[url] = doc;
+  }
+
+  return docscache[url];
+}
+
 
 function notNull<T>(value: T | null): value is T {
   return value !== null;
@@ -232,22 +269,25 @@ class GenerateTypings {
         undefined,
         undefined,
         undefined,
-        p,
+        p as any,
         undefined,
-        factory.createTypeReferenceNode(pt, undefined),
+        factory.createTypeReferenceNode(pt as any, undefined),
         undefined
       )
     );
-    return factory.createFunctionDeclaration(
-      undefined,
-      [MODIFIERS.Export],
-      undefined,
-      method.name,
-      undefined,
-      params,
-      type,
-      undefined
-    );
+    return [
+      method.docs,
+      factory.createFunctionDeclaration(
+        undefined,
+        [MODIFIERS.Export],
+        undefined,
+        method.name,
+        undefined,
+        params,
+        type,
+        undefined
+      )
+    ];
   }
 
   static parseArgs(name: string, args: string) {
@@ -318,9 +358,9 @@ class GenerateTypings {
   async getListOfRuntimeMethods() {
     const refs = await this.parseRef();
     const root = await this.parseJavadoc("RuntimeLibrary");
-    const methods = root
+    const methods: { originalName: string, name: string, params: string[] }[] = root
       .querySelectorAll(".method-summary-table.col-second code")
-      .map((m) => {
+      .map((m: any) => {
         const nameContainer = m.querySelector(".member-name-link");
         const name = camelCase(nameContainer.innerText);
         const signature = m.childNodes[1];
@@ -328,37 +368,54 @@ class GenerateTypings {
           ? GenerateTypings.parseArgs(name, m.innerText)
           : [];
 
-        return { name, params };
+        return { originalName: nameContainer.innerText, name, params };
       });
 
 
-    return refs
-      .flatMap((r) =>
-        methods
-          .filter(
-            (m) => m.name === r.name && m.params.length == r.paramTypes.length
-          )
-          .map((m) => ({ ...r, params: m.params }))
-      )
-      .filter((r) => r.name !== "delete")
-      .map((r) => {
-        const identifier = `${r.name}[${r.paramTypes.join(",")}]`;
-        // @ts-ignore
-        const overrides = typeOverrides.paramNames[identifier];
-        if (overrides) {
-          return {
-            ...r, params: r.params.map((p, i) => overrides[i] || p)
-          };
-        }
+    return Promise.all(
+      refs
+        .flatMap((r) =>
+          methods
+            .filter(
+              (m) => m.name === r.name && m.params.length == r.paramTypes.length
+            )
+            .map((m) => ({ ...r, params: m.params, originalName: m.originalName, docs: undefined as any }))
+        )
+        .filter((r) => r.name !== "delete")
+        .map(async (r) => {
+          const identifier = `${r.name}[${r.paramTypes.join(",")}]`;
 
-        return r;
-      });
+          r = { ...r, docs: await GenerateTypings.findDocs(r) };
+
+          const overrides = typeOverrides.paramNames[identifier as keyof typeof typeOverrides.paramNames];
+          if (overrides) {
+            return {
+              ...r, params: r.params.map((p, i) => overrides[i] || p)
+            };
+          }
+
+          return r;
+        })
+    );
   }
 
   async getRuntimeLibrary() {
-    return (await this.getListOfRuntimeMethods()).map((m) =>
+    return (await this.getListOfRuntimeMethods()).flatMap((m) =>
       GenerateTypings.runtimeMethodToTypeScript(m)
-    );
+    ).filter(m => m !== undefined);
+  }
+
+  static async findDocs(ref: { params: string[], name: string, originalName: string, paramTypes: string[] }) {
+    const identifier = `${ref.originalName}[${ref.paramTypes.join(",")}]`;
+    const page = await parseWikiPage(ref.originalName) as any;
+    if (!page) return undefined;
+    const fnum = Object.keys(page).find((k) => page[k]?.identifier === identifier);
+    if (!fnum) return undefined;
+
+    const desc = page[fnum];
+    const f = `${desc.description}`;
+    // @ts-ignore
+    return factory.createJSDocComment(f, undefined) as PropertyDeclaration;
   }
 
   async getListOfProxyRecords() {
