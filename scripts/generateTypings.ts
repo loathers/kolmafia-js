@@ -74,11 +74,11 @@ class GenerateTypings {
       );
   }
 
-  static resolveType(
+  resolveType(
     method: HTMLElement,
     dl: ReturnType<typeof GenerateTypings.parseDataList>
   ) {
-    const javaType = method.querySelector("span.return-type")
+    const javaType = method.querySelector(this.camelCase ? "span.returnType" :"span.return-type")
       .innerText as JavaType;
 
     if (TYPE_MAP[javaType]) {
@@ -274,11 +274,13 @@ class GenerateTypings {
 
   javadocsPath: string;
   refPath: string;
+  camelCase: boolean;
   turndown = new TurndownService();
 
-  constructor(javadocsPath: string, refPath: string) {
+  constructor(javadocsPath: string, refPath: string, camelCase: boolean) {
     this.javadocsPath = javadocsPath;
     this.refPath = refPath;
+    this.camelCase = camelCase;
   }
 
   async parseJavadoc(fileName: string) {
@@ -319,9 +321,9 @@ class GenerateTypings {
     const refs = await this.parseRef();
     const root = await this.parseJavadoc("RuntimeLibrary");
     const methods = root
-      .querySelectorAll(".method-summary-table.col-second code")
+      .querySelectorAll(this.camelCase ? ".methodSummary table .colSecond code" : ".method-summary-table.col-second code")
       .map((m) => {
-        const nameContainer = m.querySelector(".member-name-link");
+        const nameContainer = m.querySelector(this.camelCase ? ".memberNameLink" : ".member-name-link");
         const name = camelCase(nameContainer.innerText);
         const signature = m.childNodes[1];
         const params = signature
@@ -330,7 +332,6 @@ class GenerateTypings {
 
         return { name, params };
       });
-
 
     return refs
       .flatMap((r) =>
@@ -364,6 +365,8 @@ class GenerateTypings {
   async getListOfProxyRecords() {
     const root = await this.parseJavadoc("parsetree/ProxyRecordValue");
     const nodes = root.querySelectorAll(
+      this.camelCase ?
+      "section.nestedClassSummary .colSecond code span a" :
       "section.nested-class-summary .col-second code span a"
     );
     return [...nodes].map((a) =>
@@ -379,13 +382,15 @@ class GenerateTypings {
       .innerText.replace(/^Class ProxyRecordValue.(\w+)Proxy$/, "$1");
 
     const methodList = root.querySelectorAll(
+      this.camelCase ?
+      "section.methodDetails section.detail" :
       "section.method-details section.detail"
     );
 
     const fields = [...methodList].map((method) => {
       const dataList = GenerateTypings.parseDataList(method);
       const nameContainer = method
-        .querySelector("span.element-name");
+        .querySelector(this.camelCase ? "span.memberName" : "span.element-name");
 
       const name = nameContainer.innerText.replace(/^get_/, "");
 
@@ -394,7 +399,7 @@ class GenerateTypings {
 
       const type =
         typeOverrides.proxyRecords[fieldPath] ||
-        GenerateTypings.resolveType(method, dataList);
+        this.resolveType(method, dataList);
 
       const prettyName =
         name.charAt(0).toUpperCase() + name.substr(1).replace(/_/g, " ");
@@ -469,10 +474,11 @@ async function main() {
         help: "Save the output of `jsref` in the Mafia cli to a text file and specify it here",
       },
       outputPath: { type: "string", default: "index.d.ts" },
+      camelCase: { type: "boolean", default: false }
     })
     .help().argv;
 
-  const generateTypings = new GenerateTypings(argv.javadocPath, argv.refPath);
+  const generateTypings = new GenerateTypings(argv.javadocPath, argv.refPath, argv.camelCase);
 
   const result = await generateTypings.run();
 

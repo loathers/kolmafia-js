@@ -271,6 +271,7 @@ export function isDisplayable(item: Item): boolean;
 export function isFamiliarEquipmentLocked(): boolean;
 export function isGiftable(item: Item): boolean;
 export function isGoal(item: Item): boolean;
+export function isHeadless(): boolean;
 export function isInteger(string: string): boolean;
 export function isNpcItem(item: Item): boolean;
 export function isOnline(arg: string): boolean;
@@ -612,6 +613,7 @@ export function toInt(value: number): number;
 export function toInt(value: number): number;
 export function toInt(value: Item): number;
 export function toInt(value: Familiar): number;
+export function toInt(value: Location): number;
 export function toInt(value: Skill): number;
 export function toInt(value: Effect): number;
 export function toInt(value: Class): number;
@@ -1051,6 +1053,9 @@ declare global {
         static get<T = Location>(name: (string | number)): T;
         static get<T = Location>(names: (string | number)[]): T[];
         static all<T = Location>(): T[];
+        /**
+         * Id */
+        readonly id: number;
         /**
          * Nocombats */
         readonly nocombats: boolean;
