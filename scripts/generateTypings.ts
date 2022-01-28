@@ -133,7 +133,7 @@ class GenerateTypings {
     });
     return factory.createClassDeclaration(
       undefined,
-      undefined,
+      [MODIFIERS.Export],
       className,
       undefined,
       [MafiaClassHeritage],
@@ -436,20 +436,10 @@ class GenerateTypings {
       GenerateTypings.aggregateTypeToTypeScript(p)
     );
 
-    const global = factory.createModuleDeclaration(
-      undefined,
-      [MODIFIERS.Declare],
-      factory.createIdentifier("global"),
-      factory.createModuleBlock(aggregateTypeNodes),
-      NodeFlags.ExportContext |
-        NodeFlags.GlobalAugmentation |
-        NodeFlags.ContextFlags
-    );
-
     const nodeArray = factory.createNodeArray([
       ...runtimeLibrary,
       GenerateTypings.createMafiaClass(),
-      global,
+      ...aggregateTypeNodes,
     ]);
 
     const dts = factory.createSourceFile(
