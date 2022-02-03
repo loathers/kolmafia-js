@@ -9,6 +9,8 @@
  *  - ASH script forum thread: https://kolmafia.us/threads/priceadvisor-maximize-your-profits.3110/
  */
 
+import { Item } from "..";
+
 export interface PriceAdvice {
   /** Action command that can be executed in the gCLI */
   action: string;

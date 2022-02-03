@@ -10,6 +10,8 @@
  *  - Wiki page: https://wiki.kolmafia.us/index.php?title=Zlib
  */
 
+import { Bounty, Class, Coinmaster, Effect, Element, Familiar, Item, Location, Monster, Phylum, Servant, Skill, Stat, Thrall, Vykea } from "..";
+
 export function kmail(to: string, message: string, meat: number): boolean;
 
 export function setvar(
