@@ -366,8 +366,8 @@ class GenerateTypings {
     const root = await this.parseJavadoc("parsetree/ProxyRecordValue");
     const nodes = root.querySelectorAll(
       this.camelCase ?
-      "section.nestedClassSummary .colSecond code span a" :
-      "section.nested-class-summary .col-second code span a"
+      "section.nestedClassSummary .colSecond code a" :
+      "section.nested-class-summary .col-second code a"
     );
     return [...nodes].map((a) =>
       (a.getAttribute("href") || "").replace(/\.html$/, "")
