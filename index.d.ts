@@ -1063,6 +1063,9 @@ export class Item extends MafiaClass {
     /**
      * The noob Skill granted */
     readonly noobSkill: Skill;
+    /**
+     * Whether the Item is a potion */
+    readonly potion: boolean;
 }
 export class Location extends MafiaClass {
     static get<T = Location>(name: (string | number)): T;
