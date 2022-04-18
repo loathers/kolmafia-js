@@ -1047,7 +1047,7 @@ export class Item extends MafiaClass {
     readonly candy: boolean;
     /**
      * The candy type */
-    readonly candyType: string;
+    readonly candyType: "none" | "complex" | "simple";
     /**
      * Whether the Item is a chocolate */
     readonly chocolate: boolean;
@@ -1088,7 +1088,7 @@ export class Location extends MafiaClass {
     readonly parentdesc: string;
     /**
      * Environment */
-    readonly environment: string;
+    readonly environment: "" | "outdoor" | "indoor" | "underground" | "underwater";
     /**
      * Bounty */
     readonly bounty: Bounty;
