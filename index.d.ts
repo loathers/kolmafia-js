@@ -191,6 +191,7 @@ export function getCloset(): { [item: string]: number };
 export function getCounter(label: string): number;
 export function getCounters(label: string, min: number, max: number): string;
 export function getCustomOutfits(): string[];
+export function getDisplay(): { [item: string]: number };
 export function getDwelling(): Item;
 export function getFloristPlants(): { [location: string]: string[] };
 export function getFreePulls(): { [item: string]: number };
@@ -209,6 +210,7 @@ export function getOutfits(): string[];
 export function getPath(): string;
 export function getPathFull(): string;
 export function getPathVariables(): string;
+export function getPermedSkills(): { [skill: string]: boolean };
 export function getPlayerId(playerNameValue: string): string;
 export function getPlayerName(playerIdValue: number): string;
 export function getPower(item: Item): number;
@@ -515,6 +517,8 @@ export function retrieveItem(arg1: number, arg2: Item): boolean;
 export function retrievePrice(item: Item): number;
 export function retrievePrice(arg1: Item, arg2: number): number;
 export function retrievePrice(arg1: number, arg2: Item): number;
+export function retrievePrice(arg1: Item, arg2: number, arg3: boolean): number;
+export function retrievePrice(arg1: number, arg2: Item, arg3: boolean): number;
 export function reverseNumberology(): { [key: number]: number };
 export function reverseNumberology(advDelta: number, spleenDelta: number): { [key: number]: number };
 export function rollover(): number;
@@ -1051,6 +1055,9 @@ export class Item extends MafiaClass {
     /**
      * Whether the Item is a chocolate */
     readonly chocolate: boolean;
+    /**
+     * Whether the Item is a potion */
+    readonly potion: boolean;
     /**
      * The coinmaster who sells this Item */
     readonly seller: Coinmaster;
