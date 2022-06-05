@@ -225,6 +225,7 @@ export function getStash(): { [item: string]: number };
 export function getStorage(): { [item: string]: number };
 export function getVersion(): string;
 export function getWorkshed(): Item;
+export function getZapWand(): Item;
 export function gnomadsAvailable(): boolean;
 export function goalExists(check: string): boolean;
 export function groupString(string: string, regex: string): { [key: number]: { [key: number]: string } };
@@ -1132,6 +1133,9 @@ export class Monster extends MafiaClass {
      * Name */
     readonly name: string;
     /**
+     * Article */
+    readonly article: string;
+    /**
      * Id */
     readonly id: number;
     /**
@@ -1168,6 +1172,9 @@ export class Monster extends MafiaClass {
      * Physical resistance */
     readonly physicalResistance: number;
     /**
+     * Elemental resistance */
+    readonly elementalResistance: number;
+    /**
      * Min meat */
     readonly minMeat: number;
     /**
@@ -1182,6 +1189,9 @@ export class Monster extends MafiaClass {
     /**
      * Base mainstat exp */
     readonly baseMainstatExp: number;
+    /**
+     * Group */
+    readonly group: number;
     /**
      * Phylum */
     readonly phylum: Phylum;
