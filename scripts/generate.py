@@ -77,11 +77,10 @@ def get_functions():
     ]
 
 
-def get_mafia_class_methods(type, accept_numbers=False):
-    accepted = "(string | number)" if accept_numbers else "string"
+def get_mafia_class_methods(type, arg_type="any"):
     return [
-        f"static get<T{' = ' + type if type else ''}>(name: {accepted}): T;",
-        f"static get<T{' = ' + type if type else ''}>(names: {accepted}[]): T[];",
+        f"static get<T{' = ' + type if type else ''}>(name: {arg_type}): T;",
+        f"static get<T{' = ' + type if type else ''}>(names: {arg_type}[]): T[];",
         f"static all<T{' = ' + type if type else ''}>(): T[];",
     ]
 
@@ -110,8 +109,23 @@ def format_properties(name, properties):
     return [format_property(name, p) for p in properties]
 
 
-def format_mafia_class(name, properties=[]):
-    accept_numbers = name in [
+def format_mafia_class(name, properties=[], values=[]):
+    type_string = None
+
+    if len(values) > 0:
+        arg_type = name + "Type"
+        type_string = (
+            "export type "
+            + arg_type
+            + " = "
+            + " | ".join([f'"{v}"' for v in values])
+            + ";"
+        )
+    else:
+        arg_type = "string"
+
+    if name in [
+        "Class",
         "Effect",
         "Familiar",
         "Item",
@@ -121,13 +135,15 @@ def format_mafia_class(name, properties=[]):
         "Skill",
         "Slot",
         "Thrall",
-    ]
+    ]:
+        arg_type = f"({arg_type} | number)"
 
     properties = [line for p in format_properties(name, properties) for line in p]
 
     return [
+        *([type_string] if type_string else []),
         f"export class {name} extends MafiaClass {{",
-        *[f"    {l}" for l in get_mafia_class_methods(name, accept_numbers)],
+        *[f"    {l}" for l in get_mafia_class_methods(name, arg_type)],
         *[f"    {l}" for l in properties],
         "}",
     ]
@@ -146,7 +162,12 @@ def get_enumerated_class(ec):
     field_types = [get_type(ft) for ft in type.getFieldTypes()]
     properties = zip(field_types, type.getFieldNames())
 
-    return format_mafia_class(name, properties)
+    values = (
+        [v.contentString for v in ec.allValues().content]
+        if len(ec.allValues().content) < 30
+        else []
+    )
+    return format_mafia_class(name, properties, values)
 
 
 def get_enumerated_classes():
