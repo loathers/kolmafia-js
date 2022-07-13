@@ -193,6 +193,7 @@ export function getCounters(label: string, min: number, max: number): string;
 export function getCustomOutfits(): string[];
 export function getDisplay(): { [item: string]: number };
 export function getDwelling(): Item;
+export function getFishingLocations(): { [key: string]: Location };
 export function getFloristPlants(): { [location: string]: string[] };
 export function getFreePulls(): { [item: string]: number };
 export function getFuel(): number;
@@ -298,7 +299,6 @@ export function itemDropModifier(): number;
 export function itemDrops(): { [item: string]: number };
 export function itemDrops(arg: Monster): { [item: string]: number };
 export function itemDropsArray(): { drop: Item; rate: number; type: string; }[];
-export function itemDropsArray(monster: Monster): { drop: Item; rate: number; type: string; }[];
 export function itemDropsArray(arg: Monster): { drop: Item; rate: number; type: string; }[];
 export function itemPockets(): { [key: number]: boolean };
 export function itemType(item: Item): string;
@@ -495,6 +495,7 @@ export function pvpAttacksLeft(): number;
 export function rainCost(skill: Skill): number;
 export function random(arg: number): number;
 export function rawDamageAbsorption(): number;
+export function readCcs(name: string): string;
 export function receiveFax(): void;
 export function refreshShop(): boolean;
 export function refreshStash(): boolean;
@@ -712,6 +713,7 @@ export function whoClan(): { [key: string]: boolean };
 export function willUsuallyDodge(): boolean;
 export function willUsuallyMiss(): boolean;
 export function write(string: string): void;
+export function writeCcs(data: string, name: string): boolean;
 export function writeln(string: string): void;
 export function xpath(html: string, xpath: string): string[];
 declare abstract class MafiaClass {
@@ -790,12 +792,6 @@ export class Effect extends MafiaClass {
      * Default */
     readonly default: string;
     /**
-     * Quality */
-    readonly quality: string;
-    /**
-     * Attributes */
-    readonly attributes: string;
-    /**
      * Note */
     readonly note: string;
     /**
@@ -810,6 +806,12 @@ export class Effect extends MafiaClass {
     /**
      * Candy tier */
     readonly candyTier: number;
+    /**
+     * Quality */
+    readonly quality: string;
+    /**
+     * Attributes */
+    readonly attributes: string;
     /**
      * Song */
     readonly song: boolean;
@@ -835,6 +837,12 @@ export class Familiar extends MafiaClass {
     /**
      * Name */
     readonly name: string;
+    /**
+     * Owner */
+    readonly owner: string;
+    /**
+     * Owner id */
+    readonly ownerId: number;
     /**
      * Experience */
     readonly experience: number;
@@ -909,31 +917,31 @@ export class Familiar extends MafiaClass {
     readonly pokeLevel: number;
     /**
      * Poke level 2 power */
-    readonly pokeLevel_2Power: number;
+    readonly pokeLevel2Power: number;
     /**
      * Poke level 2 hp */
-    readonly pokeLevel_2Hp: number;
+    readonly pokeLevel2Hp: number;
     /**
      * Poke level 3 power */
-    readonly pokeLevel_3Power: number;
+    readonly pokeLevel3Power: number;
     /**
      * Poke level 3 hp */
-    readonly pokeLevel_3Hp: number;
+    readonly pokeLevel3Hp: number;
     /**
      * Poke level 4 power */
-    readonly pokeLevel_4Power: number;
+    readonly pokeLevel4Power: number;
     /**
      * Poke level 4 hp */
-    readonly pokeLevel_4Hp: number;
+    readonly pokeLevel4Hp: number;
     /**
      * Poke move 1 */
-    readonly pokeMove_1: string;
+    readonly pokeMove1: string;
     /**
      * Poke move 2 */
-    readonly pokeMove_2: string;
+    readonly pokeMove2: string;
     /**
      * Poke move 3 */
-    readonly pokeMove_3: string;
+    readonly pokeMove3: string;
     /**
      * Poke attribute */
     readonly pokeAttribute: string;
@@ -943,134 +951,134 @@ export class Item extends MafiaClass {
     static get<T = Item>(names: (string | number)[]): T[];
     static all<T = Item>(): T[];
     /**
-     * The name */
+     * Name */
     readonly name: string;
     /**
-     * The TCRS name */
-    readonly tcrsName: string;
-    /**
-     * The plural */
+     * Plural */
     readonly plural: string;
     /**
-     * The descid */
+     * Descid */
     readonly descid: string;
     /**
-     * The filename of the image */
+     * Image */
     readonly image: string;
     /**
-     * The filename of the small image */
+     * Smallimage */
     readonly smallimage: string;
     /**
-     * The level requirement */
+     * Levelreq */
     readonly levelreq: number;
     /**
-     * The quality */
+     * Quality */
     readonly quality: string;
     /**
-     * The range of adventures gained */
+     * Adventures */
     readonly adventures: string;
     /**
-     * The range of muscle substats gained */
+     * Muscle */
     readonly muscle: string;
     /**
-     * The range of mysticality substats gained */
+     * Mysticality */
     readonly mysticality: string;
     /**
-     * The range of moxie substats gained */
+     * Moxie */
     readonly moxie: string;
     /**
-     * The stomach size */
+     * Fullness */
     readonly fullness: number;
     /**
-     * The liver size */
+     * Inebriety */
     readonly inebriety: number;
     /**
-     * The spleen size */
+     * Spleen */
     readonly spleen: number;
     /**
-     * The minimum HP restored */
+     * Minhp */
     readonly minhp: number;
     /**
-     * The maximum HP restored */
+     * Maxhp */
     readonly maxhp: number;
     /**
-     * The minimum MP restored */
+     * Minmp */
     readonly minmp: number;
     /**
-     * The maximum MP restored */
+     * Maxmp */
     readonly maxmp: number;
     /**
-     * The number of daily uses left */
+     * Dailyusesleft */
     readonly dailyusesleft: number;
     /**
-     * The notes */
+     * Notes */
     readonly notes: string;
     /**
-     * Whether the Item is a quest item */
+     * Quest */
     readonly quest: boolean;
     /**
-     * Whether the Item is a gift item */
+     * Gift */
     readonly gift: boolean;
     /**
-     * Whether the Item is tradeable */
+     * Tradeable */
     readonly tradeable: boolean;
     /**
-     * Whether the Item is a discardable */
+     * Discardable */
     readonly discardable: boolean;
     /**
-     * Whether the Item is usable in combat */
+     * Combat */
     readonly combat: boolean;
     /**
-     * Whether the Item is combat reusable */
+     * Combat reusable */
     readonly combatReusable: boolean;
     /**
-     * Whether the Item is usable */
+     * Usable */
     readonly usable: boolean;
     /**
-     * Whether the Item is reusable */
+     * Reusable */
     readonly reusable: boolean;
     /**
-     * Whether the Item is multiusable */
+     * Multi */
     readonly multi: boolean;
     /**
-     * Whether the Item is a "fancy" ingredient */
+     * Fancy */
     readonly fancy: boolean;
     /**
-     * Whether the Item is a meatpasting ingredient */
+     * Pasteable */
     readonly pasteable: boolean;
     /**
-     * Whether the Item is a meatsmithing ingredient */
+     * Smithable */
     readonly smithable: boolean;
     /**
-     * Whether the Item is a cooking ingredient */
+     * Cookable */
     readonly cookable: boolean;
     /**
-     * Whether the Item is a cocktailcrafting ingredient */
+     * Mixable */
     readonly mixable: boolean;
     /**
-     * Whether the Item is a candy */
+     * Candy */
     readonly candy: boolean;
     /**
-     * The candy type */
+     * Candy type */
     readonly candyType: string;
     /**
-     * Whether the Item is a chocolate */
+     * Chocolate */
     readonly chocolate: boolean;
     /**
-     * Whether the Item is a potion */
+     * Potion */
     readonly potion: boolean;
     /**
-     * The coinmaster who sells this Item */
+     * Seller */
     readonly seller: Coinmaster;
     /**
-     * The Coinmaster who buys this Item */
+     * Buyer */
     readonly buyer: Coinmaster;
     /**
-     * The length of the display name */
+     * Name length */
     readonly nameLength: number;
     /**
-     * The noob Skill granted */
+     * Noob skill */
     readonly noobSkill: Skill;
+    /**
+     * Tcrs name */
+    readonly tcrsName: string;
 }
 export class Location extends MafiaClass {
     static get<T = Location>(name: (string | number)): T;
@@ -1078,7 +1086,7 @@ export class Location extends MafiaClass {
     static all<T = Location>(): T[];
     /**
      * Id */
-    readonly id: number;
+    readonly id: boolean;
     /**
      * Nocombats */
     readonly nocombats: boolean;
@@ -1098,6 +1106,9 @@ export class Location extends MafiaClass {
      * Environment */
     readonly environment: string;
     /**
+     * Fire level */
+    readonly fireLevel: number;
+    /**
      * Bounty */
     readonly bounty: Bounty;
     /**
@@ -1116,14 +1127,14 @@ export class Location extends MafiaClass {
      * Recommended stat */
     readonly recommendedStat: number;
     /**
+     * Poison */
+    readonly poison: number;
+    /**
      * Water level */
     readonly waterLevel: number;
     /**
      * Wanderers */
     readonly wanderers: boolean;
-    /**
-     * Fire level */
-    readonly fireLevel: number;
 }
 export class Monster extends MafiaClass {
     static get<T = Monster>(name: (string | number)): T;
@@ -1145,6 +1156,9 @@ export class Monster extends MafiaClass {
      * Base attack */
     readonly baseAttack: number;
     /**
+     * Base defense */
+    readonly baseDefense: number;
+    /**
      * Raw hp */
     readonly rawHp: number;
     /**
@@ -1154,9 +1168,6 @@ export class Monster extends MafiaClass {
      * Raw defense */
     readonly rawDefense: number;
     /**
-     * Base defense */
-    readonly baseDefense: number;
-    /**
      * Base initiative */
     readonly baseInitiative: number;
     /**
@@ -1165,6 +1176,9 @@ export class Monster extends MafiaClass {
     /**
      * Attack element */
     readonly attackElement: Element;
+    /**
+     * Attack elements */
+    readonly attackElements: { [element: string]: boolean };
     /**
      * Defense element */
     readonly defenseElement: Element;
@@ -1211,11 +1225,11 @@ export class Monster extends MafiaClass {
      * Images */
     readonly images: { [image: string]: boolean };
     /**
-     * Random modifiers */
-    readonly randomModifiers: { [randomModifier: string]: boolean };
-    /**
      * Sub types */
     readonly subTypes: { [subType: string]: boolean };
+    /**
+     * Random modifiers */
+    readonly randomModifiers: { [randomModifier: string]: boolean };
     /**
      * Manuel name */
     readonly manuelName: string;
@@ -1370,7 +1384,7 @@ export class Vykea extends MafiaClass {
     readonly name: string;
     /**
      * Type */
-    readonly type: string;
+    readonly type: number;
     /**
      * Rune */
     readonly rune: Item;
