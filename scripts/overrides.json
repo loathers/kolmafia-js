@@ -1,5 +1,4 @@
 {
-    "nonProxyAggregateTypes": [],
     "proxyRecords": {
         "Bounty.monster": "Monster",
         "Bounty.location": "Location",

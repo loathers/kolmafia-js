@@ -1,0 +1,43 @@
+[[package]]
+name = "pyjnius"
+version = "1.4.2"
+description = "A Python module to access Java classes as Python classes using JNI."
+category = "main"
+optional = false
+python-versions = "*"
+
+[package.dependencies]
+six = ">=1.7.0"
+
+[package.extras]
+ci = ["coveralls", "pytest-rerunfailures"]
+dev = ["pytest", "pytest-cov", "pycodestyle"]
+
+[[package]]
+name = "pymafia"
+version = "0.0.2"
+description = "A Python module and bridge for reflecting KoLmafia's Java environment."
+category = "main"
+optional = false
+python-versions = ">=3.9"
+
+[package.dependencies]
+pyjnius = ">=1.4"
+
+[[package]]
+name = "six"
+version = "1.16.0"
+description = "Python 2 and 3 compatibility utilities"
+category = "main"
+optional = false
+python-versions = ">=2.7, !=3.0.*, !=3.1.*, !=3.2.*"
+
+[metadata]
+lock-version = "1.1"
+python-versions = "^3.10"
+content-hash = "56e9b7d3fb27f81d3c8f8df68e8d365781c52fbef1459811106db11338169d3d"
+
+[metadata.files]
+pyjnius = []
+pymafia = []
+six = []
