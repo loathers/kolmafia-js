@@ -1,0 +1,12 @@
+diff --git a/build.gradle b/build.gradle
+index 2fd710ad83..17dcb0abc5 100644
+--- a/build.gradle
++++ b/build.gradle
+@@ -265,6 +265,7 @@ java {
+ 
+ tasks.withType(JavaCompile) {
+ 	options.encoding = 'UTF-8'
++	options.compilerArgs += ['-parameters']
+ }
+ 
+ task cleanJpackage(type: Delete) {
