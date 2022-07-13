@@ -717,8 +717,8 @@ export function writeCcs(data: string, name: string): boolean;
 export function writeln(string: string): void;
 export function xpath(html: string, xpath: string): string[];
 declare abstract class MafiaClass {
-    static get<T>(name: string): T;
-    static get<T>(names: string[]): T[];
+    static get<T>(name: any): T;
+    static get<T>(names: any[]): T[];
     static all<T>(): T[];
 }
 export class Bounty extends MafiaClass {
@@ -747,9 +747,10 @@ export class Bounty extends MafiaClass {
      * Location */
     readonly location: Location;
 }
+export type ClassType = "Zombie Master" | "Ed the Undying" | "Beanslinger" | "Avatar of Jarlsberg" | "Grey Goo" | "Seal Clubber" | "Disco Bandit" | "Turtle Tamer" | "Pastamancer" | "Accordion Thief" | "Sauceror" | "Avatar of Boris" | "Cow Puncher" | "Vampyre" | "Avatar of Sneaky Pete" | "Snake Oiler" | "Plumber" | "Gelatinous Noob";
 export class Class extends MafiaClass {
-    static get<T = Class>(name: string): T;
-    static get<T = Class>(names: string[]): T[];
+    static get<T = Class>(name: (ClassType | number)): T;
+    static get<T = Class>(names: (ClassType | number)[]): T[];
     static all<T = Class>(): T[];
     /**
      * Primestat */
@@ -816,9 +817,10 @@ export class Effect extends MafiaClass {
      * Song */
     readonly song: boolean;
 }
+export type ElementType = "cold" | "hot" | "sleaze" | "spooky" | "stench" | "slime" | "supercold" | "bad spelling" | "shadow";
 export class Element extends MafiaClass {
-    static get<T = Element>(name: string): T;
-    static get<T = Element>(names: string[]): T[];
+    static get<T = Element>(name: ElementType): T;
+    static get<T = Element>(names: ElementType[]): T[];
     static all<T = Element>(): T[];
     /**
      * Image */
@@ -1240,17 +1242,19 @@ export class Monster extends MafiaClass {
      * Attributes */
     readonly attributes: string;
 }
+export type PhylumType = "beast" | "bug" | "constellation" | "construct" | "demon" | "dude" | "elemental" | "elf" | "fish" | "goblin" | "hippy" | "hobo" | "horror" | "humanoid" | "mer-kin" | "orc" | "penguin" | "pirate" | "plant" | "slime" | "undead" | "weird";
 export class Phylum extends MafiaClass {
-    static get<T = Phylum>(name: string): T;
-    static get<T = Phylum>(names: string[]): T[];
+    static get<T = Phylum>(name: PhylumType): T;
+    static get<T = Phylum>(names: PhylumType[]): T[];
     static all<T = Phylum>(): T[];
     /**
      * Image */
     readonly image: string;
 }
+export type ServantType = "Assassin" | "Belly-Dancer" | "Bodyguard" | "Cat" | "Maid" | "Priest" | "Scribe";
 export class Servant extends MafiaClass {
-    static get<T = Servant>(name: (string | number)): T;
-    static get<T = Servant>(names: (string | number)[]): T[];
+    static get<T = Servant>(name: (ServantType | number)): T;
+    static get<T = Servant>(names: (ServantType | number)[]): T[];
     static all<T = Servant>(): T[];
     /**
      * Id */
@@ -1336,19 +1340,22 @@ export class Skill extends MafiaClass {
      * Timescast */
     readonly timescast: number;
 }
+export type SlotType = "hat" | "weapon" | "holster" | "off-hand" | "back" | "shirt" | "pants" | "acc1" | "acc2" | "acc3" | "familiar" | "crown-of-thrones" | "sticker1" | "sticker2" | "sticker3" | "card-sleeve" | "folder1" | "folder2" | "folder3" | "folder4" | "folder5" | "buddy-bjorn" | "bootskin" | "bootspur" | "fakehand";
 export class Slot extends MafiaClass {
-    static get<T = Slot>(name: (string | number)): T;
-    static get<T = Slot>(names: (string | number)[]): T[];
+    static get<T = Slot>(name: (SlotType | number)): T;
+    static get<T = Slot>(names: (SlotType | number)[]): T[];
     static all<T = Slot>(): T[];
 }
+export type StatType = "Muscle" | "Mysticality" | "Moxie";
 export class Stat extends MafiaClass {
-    static get<T = Stat>(name: string): T;
-    static get<T = Stat>(names: string[]): T[];
+    static get<T = Stat>(name: StatType): T;
+    static get<T = Stat>(names: StatType[]): T[];
     static all<T = Stat>(): T[];
 }
+export type ThrallType = "Angel Hair Wisp" | "Elbow Macaroni" | "Lasagmbie" | "Penne Dreadful" | "Spaghetti Elemental" | "Spice Ghost" | "Vampieroghi" | "Vermincelli";
 export class Thrall extends MafiaClass {
-    static get<T = Thrall>(name: (string | number)): T;
-    static get<T = Thrall>(names: (string | number)[]): T[];
+    static get<T = Thrall>(name: (ThrallType | number)): T;
+    static get<T = Thrall>(names: (ThrallType | number)[]): T[];
     static all<T = Thrall>(): T[];
     /**
      * Id */
