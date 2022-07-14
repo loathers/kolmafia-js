@@ -77,7 +77,7 @@ def get_functions():
     ]
 
 
-def get_mafia_class_methods(type, arg_type="any"):
+def get_mafia_class_methods(type, arg_type="(string | number)"):
     return [
         f"static get<T{' = ' + type if type else ''}>(name: {arg_type}): T;",
         f"static get<T{' = ' + type if type else ''}>(names: {arg_type}[]): T[];",
@@ -162,7 +162,7 @@ def get_enumerated_class(ec):
     field_types = [get_type(ft) for ft in type.getFieldTypes()]
     properties = zip(field_types, type.getFieldNames())
 
-    values = (
+    values = sorted(
         [v.contentString for v in ec.allValues().content]
         if len(ec.allValues().content) < 30
         else []

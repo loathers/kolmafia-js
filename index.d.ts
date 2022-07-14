@@ -717,8 +717,8 @@ export function writeCcs(data: string, name: string): boolean;
 export function writeln(string: string): void;
 export function xpath(html: string, xpath: string): string[];
 declare abstract class MafiaClass {
-    static get<T>(name: any): T;
-    static get<T>(names: any[]): T[];
+    static get<T>(name: (string | number)): T;
+    static get<T>(names: (string | number)[]): T[];
     static all<T>(): T[];
 }
 export class Bounty extends MafiaClass {
@@ -747,7 +747,7 @@ export class Bounty extends MafiaClass {
      * Location */
     readonly location: Location;
 }
-export type ClassType = "Zombie Master" | "Ed the Undying" | "Beanslinger" | "Avatar of Jarlsberg" | "Grey Goo" | "Seal Clubber" | "Disco Bandit" | "Turtle Tamer" | "Pastamancer" | "Accordion Thief" | "Sauceror" | "Avatar of Boris" | "Cow Puncher" | "Vampyre" | "Avatar of Sneaky Pete" | "Snake Oiler" | "Plumber" | "Gelatinous Noob";
+export type ClassType = "Accordion Thief" | "Avatar of Boris" | "Avatar of Jarlsberg" | "Avatar of Sneaky Pete" | "Beanslinger" | "Cow Puncher" | "Disco Bandit" | "Ed the Undying" | "Gelatinous Noob" | "Grey Goo" | "Pastamancer" | "Plumber" | "Sauceror" | "Seal Clubber" | "Snake Oiler" | "Turtle Tamer" | "Vampyre" | "Zombie Master";
 export class Class extends MafiaClass {
     static get<T = Class>(name: (ClassType | number)): T;
     static get<T = Class>(names: (ClassType | number)[]): T[];
@@ -817,7 +817,7 @@ export class Effect extends MafiaClass {
      * Song */
     readonly song: boolean;
 }
-export type ElementType = "cold" | "hot" | "sleaze" | "spooky" | "stench" | "slime" | "supercold" | "bad spelling" | "shadow";
+export type ElementType = "bad spelling" | "cold" | "hot" | "shadow" | "sleaze" | "slime" | "spooky" | "stench" | "supercold";
 export class Element extends MafiaClass {
     static get<T = Element>(name: ElementType): T;
     static get<T = Element>(names: ElementType[]): T[];
@@ -1340,13 +1340,13 @@ export class Skill extends MafiaClass {
      * Timescast */
     readonly timescast: number;
 }
-export type SlotType = "hat" | "weapon" | "holster" | "off-hand" | "back" | "shirt" | "pants" | "acc1" | "acc2" | "acc3" | "familiar" | "crown-of-thrones" | "sticker1" | "sticker2" | "sticker3" | "card-sleeve" | "folder1" | "folder2" | "folder3" | "folder4" | "folder5" | "buddy-bjorn" | "bootskin" | "bootspur" | "fakehand";
+export type SlotType = "acc1" | "acc2" | "acc3" | "back" | "bootskin" | "bootspur" | "buddy-bjorn" | "card-sleeve" | "crown-of-thrones" | "fakehand" | "familiar" | "folder1" | "folder2" | "folder3" | "folder4" | "folder5" | "hat" | "holster" | "off-hand" | "pants" | "shirt" | "sticker1" | "sticker2" | "sticker3" | "weapon";
 export class Slot extends MafiaClass {
     static get<T = Slot>(name: (SlotType | number)): T;
     static get<T = Slot>(names: (SlotType | number)[]): T[];
     static all<T = Slot>(): T[];
 }
-export type StatType = "Muscle" | "Mysticality" | "Moxie";
+export type StatType = "Moxie" | "Muscle" | "Mysticality";
 export class Stat extends MafiaClass {
     static get<T = Stat>(name: StatType): T;
     static get<T = Stat>(names: StatType[]): T[];
