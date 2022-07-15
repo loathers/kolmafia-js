@@ -1088,7 +1088,7 @@ export class Location extends MafiaClass {
     static all<T = Location>(): T[];
     /**
      * Id */
-    readonly id: boolean;
+    readonly id: number;
     /**
      * Nocombats */
     readonly nocombats: boolean;
