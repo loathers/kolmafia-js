@@ -93,30 +93,39 @@ def get_abstract_mafia_class():
     ]
 
 
-def format_property(name, p):
-    pretty_name = p[1].replace("_", " ").capitalize()
+def get_to_string_method(arg_type):
+    return f"toString(): {arg_type};"
 
-    type = overrides["proxyRecords"].get(f"{name}.{p[1]}") or p[0]
+
+def format_property(name, p, union_type=None):
+    prop_name = p[1]
+    pretty_prop_name = prop_name.replace("_", " ").capitalize()
+
+    if prop_name == "name" and union_type is not None:
+        type = union_type
+    else:
+        type = overrides["proxyRecords"].get(f"{name}.{prop_name}") or p[0]
 
     return [
         f"/**",
-        f" * {pretty_name} */",
-        f"readonly {km.JavascriptRuntime.toCamelCase(p[1])}: {type};",
+        f" * {pretty_prop_name} */",
+        f"readonly {km.JavascriptRuntime.toCamelCase(prop_name)}: {type};",
     ]
 
 
-def format_properties(name, properties):
-    return [format_property(name, p) for p in properties]
+def format_properties(name, properties, union_type=None):
+    return [format_property(name, p, union_type) for p in properties]
 
 
 def format_mafia_class(name, properties=[], values=[]):
+    union_type = None
     type_string = None
 
     if len(values) > 0:
-        arg_type = name + "Type"
+        arg_type = union_type = name + "Type"
         type_string = (
             "export type "
-            + arg_type
+            + union_type
             + " = "
             + " | ".join([f'"{v}"' for v in values])
             + ";"
@@ -138,12 +147,15 @@ def format_mafia_class(name, properties=[], values=[]):
     ]:
         arg_type = f"({arg_type} | number)"
 
-    properties = [line for p in format_properties(name, properties) for line in p]
+    properties = [
+        line for p in format_properties(name, properties, union_type) for line in p
+    ]
 
     return [
         *([type_string] if type_string else []),
         f"export class {name} extends MafiaClass {{",
         *[f"    {l}" for l in get_mafia_class_methods(name, arg_type)],
+        *([f"    {get_to_string_method(union_type)}"] if type_string else []),
         *[f"    {l}" for l in properties],
         "}",
     ]
