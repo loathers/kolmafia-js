@@ -756,6 +756,7 @@ export class Class extends MafiaClass {
     static get<T = Class>(name: (ClassType | number)): T;
     static get<T = Class>(names: (ClassType | number)[]): T[];
     static all<T = Class>(): T[];
+    toString(): ClassType;
     /**
      * Primestat */
     readonly primestat: Stat;
@@ -826,6 +827,7 @@ export class Element extends MafiaClass {
     static get<T = Element>(name: ElementType): T;
     static get<T = Element>(names: ElementType[]): T[];
     static all<T = Element>(): T[];
+    toString(): ElementType;
     /**
      * Image */
     readonly image: string;
@@ -1251,6 +1253,7 @@ export class Phylum extends MafiaClass {
     static get<T = Phylum>(name: PhylumType): T;
     static get<T = Phylum>(names: PhylumType[]): T[];
     static all<T = Phylum>(): T[];
+    toString(): PhylumType;
     /**
      * Image */
     readonly image: string;
@@ -1260,12 +1263,13 @@ export class Servant extends MafiaClass {
     static get<T = Servant>(name: (ServantType | number)): T;
     static get<T = Servant>(names: (ServantType | number)[]): T[];
     static all<T = Servant>(): T[];
+    toString(): ServantType;
     /**
      * Id */
     readonly id: number;
     /**
      * Name */
-    readonly name: string;
+    readonly name: ServantType;
     /**
      * Level */
     readonly level: number;
@@ -1349,24 +1353,27 @@ export class Slot extends MafiaClass {
     static get<T = Slot>(name: (SlotType | number)): T;
     static get<T = Slot>(names: (SlotType | number)[]): T[];
     static all<T = Slot>(): T[];
+    toString(): SlotType;
 }
 export type StatType = "Moxie" | "Muscle" | "Mysticality";
 export class Stat extends MafiaClass {
     static get<T = Stat>(name: StatType): T;
     static get<T = Stat>(names: StatType[]): T[];
     static all<T = Stat>(): T[];
+    toString(): StatType;
 }
 export type ThrallType = "Angel Hair Wisp" | "Elbow Macaroni" | "Lasagmbie" | "Penne Dreadful" | "Spaghetti Elemental" | "Spice Ghost" | "Vampieroghi" | "Vermincelli";
 export class Thrall extends MafiaClass {
     static get<T = Thrall>(name: (ThrallType | number)): T;
     static get<T = Thrall>(names: (ThrallType | number)[]): T[];
     static all<T = Thrall>(): T[];
+    toString(): ThrallType;
     /**
      * Id */
     readonly id: number;
     /**
      * Name */
-    readonly name: string;
+    readonly name: ThrallType;
     /**
      * Level */
     readonly level: number;
