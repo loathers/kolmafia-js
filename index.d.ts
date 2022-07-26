@@ -149,6 +149,7 @@ export function eudora(): string;
 export function eudora(newEudora: string): boolean;
 export function eudoraItem(): Item;
 export function everyCardName(name: string): string;
+export function expectedColdMedicineCabinet(): { [key: string]: Item };
 export function expectedDamage(): number;
 export function expectedDamage(arg: Monster): number;
 export function experienceBonus(): number;
