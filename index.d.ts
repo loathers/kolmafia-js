@@ -331,6 +331,7 @@ export function length(string: string): number;
 export function lightningCost(skill: Skill): number;
 export function limitMode(): string;
 export function loadHtml(string: string): string;
+export function locationAccessible(arg: Location): boolean;
 export function lockFamiliarEquipment(lock: boolean): void;
 export function logN(arg: number): number;
 export function logN(arg: number, base: number): number;
