@@ -79,9 +79,9 @@ def get_functions():
 
 def get_mafia_class_methods(type, arg_type="(string | number)"):
     return [
-        f"static get<T{' = ' + type if type else ''}>(name: {arg_type}): T;",
-        f"static get<T{' = ' + type if type else ''}>(names: {arg_type}[]): T[];",
-        f"static all<T{' = ' + type if type else ''}>(): T[];",
+        f"static get{'' if type else '<T extends MafiaClass>'}(name: {arg_type}): {type if type else 'T'};",
+        f"static get{'' if type else '<T extends MafiaClass>'}(names: {arg_type}[]): {type if type else 'T'}[];",
+        f"static all<T{' = ' + type if type else ' extends MafiaClass'}>(): T[];",
     ]
 
 

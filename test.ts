@@ -25,3 +25,13 @@ expectType<km.Slot[]>(slots);
 
 expectType<km.ServantType>(km.Servant.get("Assassin").toString());
 expectType<km.ServantType>(km.Servant.get("Assassin").name);
+
+expectType<km.Bounty[]>(km.Bounty.all());
+
+{
+    const item: km.Item = km.Item.get("None");
+    const slot = km.Slot.get("familiar");
+
+    expectType<boolean>(km.equip(slot, item));
+    expectType<boolean>(km.equip(km.Slot.get("familiar"), item));
+}
