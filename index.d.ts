@@ -731,11 +731,13 @@ declare abstract class MafiaClass {
     static get<T extends MafiaClass>(name: (string | number)): T;
     static get<T extends MafiaClass>(names: (string | number)[]): T[];
     static all<T extends MafiaClass>(): T[];
+    static none: MafiaClass;
 }
 export class Bounty extends MafiaClass {
     static get(name: string): Bounty;
     static get(names: string[]): Bounty[];
     static all<T = Bounty>(): T[];
+    static none: Bounty;
     /**
      * Plural */
     readonly plural: string;
@@ -763,6 +765,7 @@ export class Class extends MafiaClass {
     static get(name: (ClassType | number)): Class;
     static get(names: (ClassType | number)[]): Class[];
     static all<T = Class>(): T[];
+    static none: Class;
     toString(): ClassType;
     /**
      * Primestat */
@@ -772,6 +775,7 @@ export class Coinmaster extends MafiaClass {
     static get(name: string): Coinmaster;
     static get(names: string[]): Coinmaster[];
     static all<T = Coinmaster>(): T[];
+    static none: Coinmaster;
     /**
      * Token */
     readonly token: string;
@@ -798,6 +802,7 @@ export class Effect extends MafiaClass {
     static get(name: (string | number)): Effect;
     static get(names: (string | number)[]): Effect[];
     static all<T = Effect>(): T[];
+    static none: Effect;
     /**
      * Name */
     readonly name: string;
@@ -834,6 +839,7 @@ export class Element extends MafiaClass {
     static get(name: ElementType): Element;
     static get(names: ElementType[]): Element[];
     static all<T = Element>(): T[];
+    static none: Element;
     toString(): ElementType;
     /**
      * Image */
@@ -843,6 +849,7 @@ export class Familiar extends MafiaClass {
     static get(name: (string | number)): Familiar;
     static get(names: (string | number)[]): Familiar[];
     static all<T = Familiar>(): T[];
+    static none: Familiar;
     /**
      * Hatchling */
     readonly hatchling: Item;
@@ -965,6 +972,7 @@ export class Item extends MafiaClass {
     static get(name: (string | number)): Item;
     static get(names: (string | number)[]): Item[];
     static all<T = Item>(): T[];
+    static none: Item;
     /**
      * Name */
     readonly name: string;
@@ -1099,6 +1107,7 @@ export class Location extends MafiaClass {
     static get(name: (string | number)): Location;
     static get(names: (string | number)[]): Location[];
     static all<T = Location>(): T[];
+    static none: Location;
     /**
      * Id */
     readonly id: number;
@@ -1158,6 +1167,7 @@ export class Monster extends MafiaClass {
     static get(name: (string | number)): Monster;
     static get(names: (string | number)[]): Monster[];
     static all<T = Monster>(): T[];
+    static none: Monster;
     /**
      * Name */
     readonly name: string;
@@ -1263,6 +1273,7 @@ export class Phylum extends MafiaClass {
     static get(name: PhylumType): Phylum;
     static get(names: PhylumType[]): Phylum[];
     static all<T = Phylum>(): T[];
+    static none: Phylum;
     toString(): PhylumType;
     /**
      * Image */
@@ -1273,6 +1284,7 @@ export class Servant extends MafiaClass {
     static get(name: (ServantType | number)): Servant;
     static get(names: (ServantType | number)[]): Servant[];
     static all<T = Servant>(): T[];
+    static none: Servant;
     toString(): ServantType;
     /**
      * Id */
@@ -1306,6 +1318,7 @@ export class Skill extends MafiaClass {
     static get(name: (string | number)): Skill;
     static get(names: (string | number)[]): Skill[];
     static all<T = Skill>(): T[];
+    static none: Skill;
     /**
      * Name */
     readonly name: string;
@@ -1363,6 +1376,7 @@ export class Slot extends MafiaClass {
     static get(name: (SlotType | number)): Slot;
     static get(names: (SlotType | number)[]): Slot[];
     static all<T = Slot>(): T[];
+    static none: Slot;
     toString(): SlotType;
 }
 export type StatType = "Moxie" | "Muscle" | "Mysticality";
@@ -1370,6 +1384,7 @@ export class Stat extends MafiaClass {
     static get(name: StatType): Stat;
     static get(names: StatType[]): Stat[];
     static all<T = Stat>(): T[];
+    static none: Stat;
     toString(): StatType;
 }
 export type ThrallType = "Angel Hair Wisp" | "Elbow Macaroni" | "Lasagmbie" | "Penne Dreadful" | "Spaghetti Elemental" | "Spice Ghost" | "Vampieroghi" | "Vermincelli";
@@ -1377,6 +1392,7 @@ export class Thrall extends MafiaClass {
     static get(name: (ThrallType | number)): Thrall;
     static get(names: (ThrallType | number)[]): Thrall[];
     static all<T = Thrall>(): T[];
+    static none: Thrall;
     toString(): ThrallType;
     /**
      * Id */
@@ -1404,6 +1420,7 @@ export class Vykea extends MafiaClass {
     static get(name: string): Vykea;
     static get(names: string[]): Vykea[];
     static all<T = Vykea>(): T[];
+    static none: Vykea;
     /**
      * Id */
     readonly id: number;

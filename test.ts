@@ -35,3 +35,5 @@ expectType<km.Bounty[]>(km.Bounty.all());
     expectType<boolean>(km.equip(slot, item));
     expectType<boolean>(km.equip(km.Slot.get("familiar"), item));
 }
+
+expectType<km.Servant>(km.Servant.none);
