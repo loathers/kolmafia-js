@@ -417,7 +417,7 @@ export function myMaxpp(): number;
 export function myMeat(): number;
 export function myMp(): number;
 export function myName(): string;
-export function myPath(): string;
+export function myPath(): Path;
 export function myPathId(): number;
 export function myPokeFam(arg: number): Familiar;
 export function myPp(): number;
@@ -479,6 +479,7 @@ export function potentialPockets(arg: Monster): { [key: number]: number };
 export function potentialPockets(arg: Effect): { [key: number]: number };
 export function potentialPockets(arg: Item): { [key: number]: number };
 export function potentialPockets(arg: Stat): { [key: number]: number };
+export function preValidateAdventure(arg: Location): boolean;
 export function prepareForAdventure(arg: Location): boolean;
 export function print(): void;
 export function print(string: string): void;
@@ -649,6 +650,7 @@ export function toInt(value: Monster): number;
 export function toInt(value: Thrall): number;
 export function toInt(value: Servant): number;
 export function toInt(value: Vykea): number;
+export function toInt(value: Path): number;
 export function toItem(value: string): Item;
 export function toItem(value: number): Item;
 export function toItem(name: string, count: number): Item;
@@ -658,6 +660,8 @@ export function toLocation(value: number): Location;
 export function toLowerCase(string: string): string;
 export function toMonster(value: string): Monster;
 export function toMonster(value: number): Monster;
+export function toPath(value: string): Path;
+export function toPath(value: number): Path;
 export function toPhylum(value: string): Phylum;
 export function toPlural(item: Item): string;
 export function toServant(value: string): Servant;
@@ -710,7 +714,7 @@ export function visitUrl(): string;
 export function visitUrl(string: string): string;
 export function visitUrl(string: string, usePostMethod: boolean): string;
 export function visitUrl(string: string, usePostMethod: boolean, encoded: boolean): string;
-export function votingBoothInitiatives(clss: Class, path: number, daycount: number): { [key: string]: boolean };
+export function votingBoothInitiatives(clss: Class, path: Path, daycount: number): { [key: string]: boolean };
 export function votingBoothInitiatives(clss: number, path: number, daycount: number): { [key: string]: boolean };
 export function wait(delay: number): void;
 export function waitq(delay: number): void;
@@ -770,6 +774,9 @@ export class Class extends MafiaClass {
     /**
      * Primestat */
     readonly primestat: Stat;
+    /**
+     * Path */
+    readonly path: Path;
 }
 export class Coinmaster extends MafiaClass {
     static get(name: string): Coinmaster;
@@ -1267,6 +1274,30 @@ export class Monster extends MafiaClass {
     /**
      * Attributes */
     readonly attributes: string;
+}
+export class Path extends MafiaClass {
+    static get(name: string): Path;
+    static get(names: string[]): Path[];
+    static all<T = Path>(): T[];
+    static none: Path;
+    /**
+     * Id */
+    readonly id: number;
+    /**
+     * Name */
+    readonly name: string;
+    /**
+     * Avatar */
+    readonly avatar: boolean;
+    /**
+     * Image */
+    readonly image: string;
+    /**
+     * Points */
+    readonly points: number;
+    /**
+     * Familiars */
+    readonly familiars: boolean;
 }
 export type PhylumType = "beast" | "bug" | "constellation" | "construct" | "demon" | "dude" | "elemental" | "elf" | "fish" | "goblin" | "hippy" | "hobo" | "horror" | "humanoid" | "mer-kin" | "orc" | "penguin" | "pirate" | "plant" | "slime" | "undead" | "weird";
 export class Phylum extends MafiaClass {
