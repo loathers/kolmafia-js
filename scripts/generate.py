@@ -46,6 +46,8 @@ def get_param_types(func):
 def describe_function(func):
     name = km.JavascriptRuntime.toCamelCase(func.getName())
 
+    deprecated = len(func.deprecationWarning) > 0
+
     type = get_return_type(func)
 
     param_types = get_param_types(func)
@@ -61,12 +63,17 @@ def describe_function(func):
     if len(param_types) != len(param_names):
         raise f"{name} has mismatching param names and types"
 
-    return {"name": name, "type": type, "params": zip(param_types, param_names)}
+    return {"name": name, "type": type, "params": zip(param_types, param_names), "deprecated": deprecated}
 
 
 def format_function(desc):
     params = ", ".join(f"{p[1]}: {p[0]}" for p in desc["params"])
-    return f"export function {desc['name']}({params}): {desc['type']};"
+    formatted = ""
+
+    if desc['deprecated']:
+        formatted += f"/** @deprecated */\n"
+
+    return formatted + f"export function {desc['name']}({params}): {desc['type']};"
 
 
 def get_functions():

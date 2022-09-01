@@ -418,6 +418,7 @@ export function myMeat(): number;
 export function myMp(): number;
 export function myName(): string;
 export function myPath(): Path;
+/** @deprecated */
 export function myPathId(): number;
 export function myPokeFam(arg: number): Familiar;
 export function myPp(): number;
@@ -457,7 +458,9 @@ export function outfitTreats(outfit: string): { [item: string]: number };
 export function overdrink(item: Item): boolean;
 export function overdrink(arg1: Item, arg2: number): boolean;
 export function overdrink(arg1: number, arg2: Item): boolean;
+/** @deprecated */
 export function pathIdToName(value: number): string;
+/** @deprecated */
 export function pathNameToId(value: string): number;
 export function pickPocket(arg: Monster): boolean;
 export function pickPocket(arg: Effect): { [effect: string]: number };
